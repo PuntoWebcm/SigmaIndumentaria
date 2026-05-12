@@ -1,0 +1,279 @@
+{% load static %}
+{% load l10n %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigma Indumentaria - Nueva Temporada</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root { 
+            --sigma-red: #801010; 
+            --sigma-dark: #1a1a1a; 
+            --sigma-gray: #f4f4f4;
+        }
+
+        /* Tipografía General */
+        body { 
+            font-family: 'Open Sans', sans-serif; 
+            color: var(--sigma-dark); 
+            background-color: #fff;
+        }
+        
+        h1, h2, h3, h4, h5, .navbar-brand, .category-link, .product-name, .btn-sigma {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* Navbar Profesional */
+        .navbar { 
+            background-color: white; 
+            border-bottom: 1px solid #eee; 
+            padding: 1rem 0;
+        }
+        .navbar-brand { font-weight: 700; font-size: 1.5rem; }
+        .admin-btn { color: #ccc; transition: 0.3s; }
+        .admin-btn:hover { color: var(--sigma-red); }
+
+        /* Hero Section Refinada */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; 
+            background-position: center;
+            color: white; 
+            padding: 120px 0; 
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .hero-section h1 { font-weight: 700; letter-spacing: 5px; }
+
+        /* Navegación de Categorías */
+        .category-nav {
+            display: flex; overflow-x: auto; white-space: nowrap;
+            padding: 20px 0; background: white; border-bottom: 1px solid #eee;
+            scrollbar-width: none;
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+        .category-link {
+            display: inline-block; padding: 10px 28px; margin: 0 10px;
+            border-radius: 4px; background: var(--sigma-gray); color: #555;
+            text-decoration: none; font-size: 0.8rem; font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .category-link:hover { background: #e2e2e2; }
+        .category-link.active { 
+            background: var(--sigma-dark); 
+            color: white;
+        }
+
+        /* Tarjetas de Producto Estilo E-commerce Real */
+        .product-card { 
+            border: none; 
+            border-radius: 0; 
+            transition: all 0.4s ease; 
+            background: none;
+            position: relative;
+        }
+        .img-wrapper {
+            overflow: hidden;
+            background-color: var(--sigma-gray);
+            margin-bottom: 15px;
+        }
+        .product-card img { 
+            height: 450px; 
+            width: 100%;
+            object-fit: cover; 
+            transition: transform 0.6s ease;
+        }
+        .product-card:hover img {
+            transform: scale(1.08);
+        }
+        
+        .product-name { 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            margin-bottom: 5px;
+            text-decoration: none;
+            color: var(--sigma-dark);
+            display: block;
+        }
+        .price-tag { 
+            color: var(--sigma-red); 
+            font-weight: 600; 
+            font-size: 1rem; 
+        }
+
+        .btn-sigma { 
+            background-color: transparent; 
+            color: var(--sigma-dark); 
+            border: 1px solid var(--sigma-dark);
+            border-radius: 0; 
+            text-transform: uppercase; 
+            font-weight: 700;
+            padding: 10px;
+            transition: all 0.3s;
+        }
+        .btn-sigma:hover {
+            background-color: var(--sigma-dark);
+            color: white;
+        }
+
+        /* Sección Nosotros Mejorada */
+        .about-section { padding: 100px 0; background-color: #fafafa; }
+        .about-img { 
+            border-radius: 0; 
+            box-shadow: 15px 15px 0px var(--sigma-red); 
+            transition: transform 0.4s;
+        }
+        .about-img:hover { transform: translate(-5px, -5px); }
+
+        footer { letter-spacing: 1px; }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'product_list' %}">
+                <span class="fw-bold">SIGMA</span>
+            </a>
+            
+            <div class="d-flex align-items-center">
+                <a href="{% url 'cart:cart_detail' %}" class="btn btn-link text-dark position-relative p-2">
+                    <i class="bi bi-bag fs-4"></i>
+                    {% if cart|length > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                        {{ cart|length }}
+                    </span>
+                    {% endif %}
+                </a>
+                {% if user.is_staff %}
+                <a href="/admin/" class="admin-btn ms-3" title="Panel de Control">
+                    <i class="bi bi-gear-fill fs-5"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="container">
+            <h1 class="display-4">NUEVA TEMPORADA</h1>
+            <p class="lead" style="letter-spacing: 4px; font-size: 0.9rem;">Elevando tu estilo cotidiano</p>
+        </div>
+    </header>
+
+    <div class="category-nav justify-content-md-center px-2">
+        <a href="{% url 'product_list' %}" class="category-link {% if not category %}active{% endif %}">VER TODO</a>
+        {% for c in categories %}
+            <a href="{{ c.get_absolute_url }}" class="category-link {% if category.slug == c.slug %}active{% endif %}">
+                {{ c.name|upper }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <main class="container my-5 pt-4">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 g-lg-5">
+            {% for product in products %}
+            <div class="col">
+                <div class="product-card h-100">
+                    <a href="{{ product.get_absolute_url }}" class="img-wrapper d-block text-decoration-none">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/400x550" alt="Sin imagen">
+                        {% endif %}
+                    </a>
+                    <div class="text-center pt-2">
+                        <a href="{{ product.get_absolute_url }}" class="product-name text-uppercase">
+                            {{ product.name }}
+                        </a>
+                        <p class="price-tag mb-3">${{ product.price|floatformat:"0"|intcomma }}</p>
+                        <a href="{{ product.get_absolute_url }}" class="btn btn-sigma w-100">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <section class="about-section border-top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-5 mb-md-0">
+                    <img src="https://images.unsplash.com/photo-1521335629791-ce3acc67bc79?auto=format&fit=crop&w=800&q=80" alt="Nosotros" class="img-fluid about-img">
+                </div>
+                <div class="col-md-6 ps-md-5 text-center text-md-start">
+                    <h2 class="fw-bold mb-4">IDENTIDAD SIGMA</h2>
+                    <p class="text-muted">No es solo ropa, es una forma de estar en el mundo. En Sigma nos enfocamos en el minimalismo funcional: prendas que se adaptan a vos, y no al revés.</p>
+                    <p class="text-muted">Cuidamos la trazabilidad de nuestras telas y cada punto de nuestras costuras para asegurar que lo que hoy compras, te acompañe por años.</p>
+                    <div class="mt-4 d-flex gap-4 justify-content-center justify-content-md-start">
+                        <span class="small fw-bold text-uppercase"><i class="bi bi-truck me-2 text-danger"></i> Envíos nacionales</span>
+                        <span class="small fw-bold text-uppercase"><i class="bi bi-shield-check me-2 text-danger"></i> Calidad Premium</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-5 bg-dark text-white text-center">
+        <div class="container">
+            <h5 class="fw-bold mb-4">SIGMA</h5>
+            <div class="mb-4">
+                <a href="#" class="text-white mx-3 fs-5"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="text-white mx-3 fs-5"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-white mx-3 fs-5"><i class="bi bi-whatsapp"></i></a>
+            </div>
+            <p class="small opacity-50 mb-0">&copy; 2026 Sigma Indumentaria - Córdoba, Argentina.</p>
+            <p class="small opacity-50 mb-0">Sitio web desarrollado por SpotWeb</p>
+            <p class="small opacity-50 mb-0">Consultanos por tu pagina al 3584163655</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060;">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="toast show border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="background-color: var(--sigma-dark); color: white; border-radius: 0;">
+                <div class="d-flex align-items-center p-3">
+                    <i class="bi bi-check-circle-fill me-3 text-success fs-5"></i>
+                    <div class="toast-body p-0 Montserrat fw-bold small text-uppercase" style="letter-spacing: 1px;">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+    // Auto-ocultar el mensaje después de 4 segundos
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl, { delay: 4000 })
+        });
+        // Si quieres que se cierren solos, Bootstrap ya lo hace con 'show'
+        setTimeout(function() {
+            toastElList.forEach(t => {
+                var bsToast = bootstrap.Toast.getInstance(t);
+                if (bsToast) bsToast.hide();
+            });
+        }, 4000);
+    });
+</script>
+</body>
+</html>

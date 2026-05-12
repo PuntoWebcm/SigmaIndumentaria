@@ -1,0 +1,195 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Compra - SIGMA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root { 
+            --sigma-red: #801010; 
+            --sigma-dark: #1a1a1a; 
+            --sigma-gray: #f8f9fa;
+        }
+
+        body { 
+            font-family: 'Open Sans', sans-serif; 
+            background-color: #fdfdfd; 
+            color: var(--sigma-dark);
+        }
+
+        h1, h2, h3, h4, h5, .navbar-brand, .btn-checkout, .product-name, .cart-header h5 {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        /* Navbar */
+        .navbar { background: white; border-bottom: 1px solid #eee; padding: 1rem 0; }
+        .navbar-brand { font-size: 1.5rem; }
+
+        /* Contenedor Carrito */
+        .cart-container { background: white; border-radius: 0; border: 1px solid #eee; overflow: hidden; }
+        .cart-header { background: var(--sigma-dark); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .cart-item { border-bottom: 1px solid #f0f0f0; padding: 25px; transition: background 0.3s; }
+        .cart-item:hover { background-color: #fafafa; }
+
+        /* Imagen */
+        .img-box { 
+            width: 90px; height: 120px; background: var(--sigma-gray); 
+            display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; flex-shrink: 0;
+        }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Badges y Detalles */
+        .product-name { text-transform: uppercase; font-size: 0.9rem; margin-bottom: 8px; }
+        .size-badge { 
+            background: var(--sigma-dark); color: white; 
+            padding: 3px 12px; font-size: 0.75rem; font-weight: 700; 
+            border-radius: 2px; text-transform: uppercase;
+        }
+        .product-price { color: var(--sigma-red); font-weight: 700; font-size: 1.1rem; }
+
+        /* Botón Eliminar */
+        .btn-remove { color: #ccc; border: none; background: none; transition: 0.3s; }
+        .btn-remove:hover { color: var(--sigma-red); transform: scale(1.1); }
+
+        /* Resumen Card */
+        .summary-card { background: white; border: 1px solid #eee; padding: 30px; position: sticky; top: 100px; }
+        .btn-checkout { 
+            background: var(--sigma-dark); color: white; border: none; 
+            padding: 18px; width: 100%; display: block; text-decoration: none;
+            text-align: center; font-size: 0.9rem; transition: 0.3s;
+        }
+        .btn-checkout:hover { background: var(--sigma-red); color: white; }
+
+        .btn-back-link { 
+            color: white; font-size: 0.75rem; text-decoration: none; 
+            opacity: 0.8; transition: 0.3s; border-bottom: 1px solid transparent;
+        }
+        .btn-back-link:hover { opacity: 1; border-color: white; }
+
+        /* Trust Badges */
+        .trust-icons { opacity: 0.6; font-size: 1.4rem; display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+
+        .btn-checkout {
+    background-color: #1a1a1a; /* Negro SIGMA */
+    color: white !important;
+    padding: 15px 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: background 0.3s ease;
+    border: none;
+    margin-top: 20px;
+}
+
+.btn-checkout:hover {
+    background-color: #801010; /* Rojo SIGMA */
+}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'product_list' %}">SIGMA</a>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-dark btn-sm rounded-0 px-3">TIENDA</a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <div class="cart-container shadow-sm">
+                    <div class="cart-header">
+                        <h5 class="mb-0">MI COMPRA ({{ cart|length }})</h5>
+                        <a href="{% url 'product_list' %}" class="btn-back-link">SEGUIR COMPRANDO</a>
+                    </div>
+                    
+                    {% for item in cart %}
+                        <div class="cart-item d-flex align-items-center">
+                            <div class="img-box me-4">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                {% else %}
+                                    <i class="bi bi-image text-muted fs-2"></i>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="flex-grow-1">
+                                <h6 class="product-name">{{ item.product.name }}</h6>
+                                <div class="mb-2">
+                                    <span class="text-muted small">Talle:</span> 
+                                    <span class="size-badge ms-1">{{ item.size_display }}</span>
+                                </div>
+                                <div class="text-muted small mb-2">Cantidad: {{ item.quantity }}</div>
+                                <div class="product-price">${{ item.total_price|floatformat:"0"|intcomma }}</div>
+                            </div>
+
+                            <form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="size" value="{{ item.size }}">
+                                <button type="submit" class="btn-remove">
+                                    <i class="bi bi-trash3 fs-5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    {% empty %}
+                        <div class="p-5 text-center">
+                            <i class="bi bi-bag-x display-1 text-muted opacity-25"></i>
+                            <p class="mt-4 Montserrat fw-bold">TU CARRITO ESTÁ VACÍO</p>
+                            <a href="{% url 'product_list' %}" class="btn btn-dark rounded-0 px-5 mt-3">IR A LA TIENDA</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="summary-card shadow-sm">
+                    <h6 class="fw-bold mb-4 Montserrat">RESUMEN</h6>
+                    <div class="d-flex justify-content-between mb-3 small">
+                        <span class="text-muted">Subtotal</span>
+                        <span>${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 small">
+                        <span class="text-muted">Envío</span>
+                        <span class="text-success fw-bold">Bonificado</span>
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold Montserrat">TOTAL</span>
+                        <span class="fw-bold fs-5">${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
+                    </div>
+                    
+                    <a href="{% url 'orders:order_create' %}" class="btn-checkout text-decoration-none d-block text-center">
+                             FINALIZAR COMPRA
+</a>
+                    <div class="trust-icons">
+                        <i class="bi bi-shield-check" title="Compra Segura"></i>
+                        <i class="bi bi-credit-card" title="Cuotas sin interés"></i>
+                        <i class="bi bi-truck" title="Envío a todo el país"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-5 bg-white border-top text-center mt-5">
+        <p class="small Montserrat fw-bold opacity-50">&copy; 2026 SIGMA INDUMENTARIA</p>
+    </footer>
+
+</body>
+</html>

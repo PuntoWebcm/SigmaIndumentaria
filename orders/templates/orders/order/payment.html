@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pago - SIGMA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --sigma-dark: #1a1a1a; --sigma-red: #801010; }
+        body { font-family: 'Open Sans', sans-serif; background: #f8f8f8; }
+        .payment-card { background: white; padding: 40px; border-radius: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 50px; }
+        .Montserrat { font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; }
+        .method-box { 
+            border: 1px solid #eee; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; 
+            display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: inherit;
+            width: 100%; text-align: left; background: none;
+        }
+        .method-box:hover { border-color: var(--sigma-dark); background: #fafafa; }
+        .total-amount { font-size: 24px; color: var(--sigma-red); }
+        /* Estilo para el contenedor de MP */
+        #wallet_container {
+    margin-top: 15px;
+    min-height: 50px; /* Le da espacio al botón para cargarse */
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="payment-card">
+                <h3 class="Montserrat text-center mb-4">MÉTODO DE PAGO</h3>
+                <p class="text-center mb-5 small text-muted">PEDIDO #{{ order.id }}</p>
+                
+                <div class="d-flex justify-content-between mb-4 border-bottom pb-2">
+                    <span class="fw-bold">TOTAL A PAGAR:</span>
+                    <span class="total-amount Montserrat">${{ order.get_total_cost }}</span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="small fw-bold mb-2 d-block">PAGAR CON TARJETA O MERCADO PAGO</label>
+                    <div id="wallet_container"></div>
+                </div>
+
+                <hr>
+
+                <button class="method-box" data-bs-toggle="modal" data-bs-target="#transferModal">
+                    <div>
+                        <strong class="d-block Montserrat">TRANSFERENCIA BANCARIA</strong>
+                        <small class="text-muted">Obtené un 10% de descuento extra</small>
+                    </div>
+                    <span class="badge bg-dark">10% OFF</span>
+                </button>
+
+                <div class="mt-4 text-center">
+                    <small class="text-muted text-uppercase">Tus datos están protegidos por encriptación SSL</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="transferModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-0">
+      <div class="modal-header border-0">
+        <h5 class="Montserrat">DATOS BANCARIOS</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p>Realizá la transferencia y enviá el comprobante por WhatsApp.</p>
+        <div class="bg-light p-3 border">
+            <p class="mb-1 small text-muted">ALIAS:</p>
+            <p class="fw-bold mb-3">SIGMA.ROPA.OK</p>
+            <p class="mb-1 small text-muted">CBU:</p>
+            <p class="fw-bold mb-3">0000003100012345678901</p>
+            <p class="mb-1 small text-muted">TITULAR:</p>
+            <p class="fw-bold mb-0">SIGMA INDUMENTARIA</p>
+        </div>
+        <a href="https://wa.me/TUNUMERO" class="btn btn-dark w-100 rounded-0 mt-3 Montserrat">ENVIAR COMPROBANTE</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script>
+  const mp = new MercadoPago('APP_USR-3f619c20-778a-4c47-baf5-700071a36f8c', {
+    locale: 'es-AR'
+  });
+  const bricksBuilder = mp.bricks();
+
+  bricksBuilder.create("wallet", "wallet_container", {
+    initialization: {
+        preferenceId: "{{ preference_id }}",
+        redirectMode: "modal" // Abre la ventana de pago sobre tu sitio
+    },
+    customization: {
+        texts: {
+            valueProp: 'smart_option',
+        },
+    },
+  });
+</script>
+</body>
+</html>

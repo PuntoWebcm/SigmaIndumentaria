@@ -1,0 +1,224 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - SIGMA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root { 
+            --sigma-red: #801010; 
+            --sigma-dark: #1a1a1a; 
+            --sigma-gray: #f8f9fa;
+        }
+
+        body { 
+            font-family: 'Open Sans', sans-serif; 
+            background-color: #fff; 
+            color: var(--sigma-dark);
+        }
+
+        h1, h2, h3, h5, .navbar-brand, .btn-sigma, .breadcrumb-item, .product-label {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* Navbar */
+        .navbar { background-color: white; border-bottom: 1px solid #eee; padding: 1rem 0; }
+        .navbar-brand { font-weight: 700; font-size: 1.5rem; }
+
+        /* Imagen del Producto */
+        .product-img-container {
+            background-color: var(--sigma-gray);
+            border-radius: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+        }
+        .product-img { 
+            max-height: 650px; 
+            width: 100%;
+            object-fit: cover; 
+            transition: transform 0.5s ease;
+        }
+        .product-img:hover { transform: scale(1.03); }
+
+        /* Textos */
+        .breadcrumb-item a { color: #888; text-decoration: none; font-weight: 600; font-size: 0.75rem; }
+        .breadcrumb-item.active { color: var(--sigma-dark); font-weight: 700; font-size: 0.75rem; }
+        
+        .product-title { font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--sigma-dark); }
+        .product-price { color: var(--sigma-red); font-weight: 400; font-size: 2rem; }
+        
+        .description-text { color: #555; line-height: 1.8; font-size: 0.95rem; }
+
+        /* Formulario y Botones */
+        .form-control:focus { border-color: var(--sigma-dark); box-shadow: none; }
+        .btn-sigma { 
+            background-color: var(--sigma-dark); 
+            color: white; 
+            border-radius: 0; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            padding: 18px;
+            transition: all 0.3s;
+            border: none;
+        }
+        .btn-sigma:hover { background-color: var(--sigma-red); color: white; }
+        
+        .btn-outline-sigma {
+            border: 1px solid #ddd;
+            color: #555;
+            border-radius: 0;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .btn-outline-sigma:hover { background: var(--sigma-gray); color: #000; }
+
+        /* Trust Badges */
+        .trust-box { border-top: 1px solid #eee; padding-top: 20px; }
+        .trust-item { font-size: 0.8rem; color: #888; margin-bottom: 8px; font-weight: 600; }
+        .trust-item i { color: var(--sigma-red); margin-right: 10px; }
+
+    
+    </style>
+</head>
+<body>
+
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'product_list' %}">
+                <span class="fw-bold">SIGMA</span>
+            </a>
+            <div class="ms-auto">
+                <a href="{% url 'cart:cart_detail' %}" class="btn btn-link text-dark position-relative p-2 text-decoration-none">
+                    <i class="bi bi-bag fs-4"></i>
+                    {% if cart|length > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                        {{ cart|length }}
+                    </span>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5 py-2">
+        <div class="row g-5">
+            <div class="col-md-6">
+                <div class="product-img-container">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/600x800?text=SIGMA+INDUMENTARIA" class="product-img" alt="Sin imagen">
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-6 ps-lg-5">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb text-uppercase">
+                        <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ product.category.name }}</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="product-title display-6 mb-3">{{ product.name }}</h1>
+                <h2 class="product-price mb-4">${{ product.price|floatformat:"0"|intcomma }}</h2>
+                
+                <div class="mb-5">
+                    <h5 class="product-label small fw-bold text-uppercase mb-3">Descripción</h5>
+                    <div class="description-text">
+                        {{ product.description|linebreaks }}
+                    </div>
+                </div>
+
+                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mt-4">
+                    {% csrf_token %}
+                    
+                    <div class="d-flex align-items-center mb-4">
+                        <label for="quantity" class="product-label small fw-bold text-uppercase me-3 mb-0">Cantidad:</label>
+                        <div style="width: 80px;">
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control rounded-0 border-dark text-center fw-bold">
+                        </div>
+                        <span class="small text-muted ms-3">({{ product.stock }} unidades disponibles)</span>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        {% if product.stock > 0 %}
+                            <button type="submit" class="btn btn-sigma btn-lg">
+                                <i class="bi bi-bag-plus me-2"></i> Añadir al Carrito
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-secondary btn-lg rounded-0" disabled>
+                                SIN STOCK TEMPORALMENTE
+                            </button>
+                        {% endif %}
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-sigma py-3">
+                            <i class="bi bi-arrow-left me-2"></i> Volver a la colección
+                        </a>
+                    </div>
+                </form>
+                
+                <div class="trust-box mt-5">
+                    <div class="trust-item"><i class="bi bi-truck"></i> ENVÍOS A TODO EL PAÍS</div>
+                    <div class="trust-item"><i class="bi bi-arrow-repeat"></i> CAMBIOS SIN CARGO EN NUESTRO LOCAL</div>
+                    <div class="trust-item"><i class="bi bi-credit-card"></i> 3 CUOTAS SIN INTERÉS</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-5 border-top text-center text-muted">
+        <p class="small Montserrat fw-bold mb-0" style="letter-spacing: 2px;">&copy; 2026 SIGMA INDUMENTARIA</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060;">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="toast show border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="background-color: var(--sigma-dark); color: white; border-radius: 0;">
+                <div class="d-flex align-items-center p-3">
+                    <i class="bi bi-check-circle-fill me-3 text-success fs-5"></i>
+                    <div class="toast-body p-0 Montserrat fw-bold small text-uppercase" style="letter-spacing: 1px;">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+    // Auto-ocultar el mensaje después de 4 segundos
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl, { delay: 4000 })
+        });
+        // Si quieres que se cierren solos, Bootstrap ya lo hace con 'show'
+        setTimeout(function() {
+            toastElList.forEach(t => {
+                var bsToast = bootstrap.Toast.getInstance(t);
+                if (bsToast) bsToast.hide();
+            });
+        }, 4000);
+    });
+</script>
+</body>
+</html>
