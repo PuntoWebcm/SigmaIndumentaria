@@ -158,9 +158,13 @@
                     </span>
                     {% endif %}
                 </a>
+                
                 {% if user.is_staff %}
-                <a href="/admin/" class="admin-btn ms-3" title="Panel de Control">
-                    <i class="bi bi-gear-fill fs-5"></i>
+                <a href="/admin/" class="ms-3" style="color: #e0e0e0; transition: color 0.3s; text-decoration: none;" 
+                   onmouseover="this.style.color='var(--sigma-red)'" 
+                   onmouseout="this.style.color='#e0e0e0'"
+                   title="Administración">
+                    <i class="bi bi-gear-fill" style="font-size: 0.9rem;"></i>
                 </a>
                 {% endif %}
             </div>
@@ -266,7 +270,6 @@
         var toastList = toastElList.map(function (toastEl) {
             return new bootstrap.Toast(toastEl, { delay: 4000 })
         });
-        // Si quieres que se cierren solos, Bootstrap ya lo hace con 'show'
         setTimeout(function() {
             toastElList.forEach(t => {
                 var bsToast = bootstrap.Toast.getInstance(t);
