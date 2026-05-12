@@ -76,7 +76,7 @@
             color: white;
         }
 
-        /* Tarjetas de Producto Estilo E-commerce Real */
+        /* Tarjetas de Producto */
         .product-card { 
             border: none; 
             border-radius: 0; 
@@ -89,12 +89,19 @@
             background-color: var(--sigma-gray);
             margin-bottom: 15px;
         }
+
+        /* Ajuste de imágenes: 250px en móvil, 450px en PC */
         .product-card img { 
-            height: 450px; 
+            height: 250px; 
             width: 100%;
             object-fit: cover; 
             transition: transform 0.6s ease;
         }
+        
+        @media (min-width: 768px) {
+            .product-card img { height: 450px; }
+        }
+
         .product-card:hover img {
             transform: scale(1.08);
         }
@@ -128,7 +135,7 @@
             color: white;
         }
 
-        /* Sección Nosotros Mejorada */
+        /* Sección Nosotros */
         .about-section { padding: 100px 0; background-color: #fafafa; }
         .about-img { 
             border-radius: 0; 
@@ -187,24 +194,24 @@
         {% endfor %}
     </div>
 
-    <main class="container my-5 pt-4">
-        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 g-lg-5">
+    <main class="container my-4 pt-2">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 g-lg-4">
             {% for product in products %}
             <div class="col">
                 <div class="product-card h-100">
                     <a href="{{ product.get_absolute_url }}" class="img-wrapper d-block text-decoration-none">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
                         {% else %}
-                            <img src="https://via.placeholder.com/400x550" alt="Sin imagen">
+                            <img src="https://via.placeholder.com/400x550" alt="Sin imagen" class="img-fluid">
                         {% endif %}
                     </a>
                     <div class="text-center pt-2">
-                        <a href="{{ product.get_absolute_url }}" class="product-name text-uppercase">
+                        <a href="{{ product.get_absolute_url }}" class="product-name text-uppercase" style="font-size: 0.75rem;">
                             {{ product.name }}
                         </a>
-                        <p class="price-tag mb-3">${{ product.price|floatformat:"0"|intcomma }}</p>
-                        <a href="{{ product.get_absolute_url }}" class="btn btn-sigma w-100">Ver Detalles</a>
+                        <p class="price-tag mb-2" style="font-size: 0.9rem;">${{ product.price|floatformat:"0"|intcomma }}</p>
+                        <a href="{{ product.get_absolute_url }}" class="btn btn-sigma w-100 py-1" style="font-size: 0.7rem;">Ver Detalles</a>
                     </div>
                 </div>
             </div>
