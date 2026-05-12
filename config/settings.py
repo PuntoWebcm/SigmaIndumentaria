@@ -28,6 +28,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- ESTA ES LA LÍNEA MÁGICA
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,8 +84,13 @@ USE_I18N = True
 USE_TZ = True
 
 # Archivos estáticos (CSS, JavaScript, Imágenes de diseño)
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # Asegúrate de tener una carpeta 'static' en la raíz
+STATIC_URL = '/static/'  # Agregamos la barra inicial /
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] 
+
+# --- CONFIGURACIÓN PARA PRODUCCIÓN (RENDER) ---
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# -----------------------------------------------
 
 # Archivos multimedia (Fotos de productos cargadas desde el Admin)
 MEDIA_URL = '/media/'
@@ -92,9 +98,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # --- CONFIGURACIÓN CRÍTICA DEL CARRITO ---
 CART_SESSION_ID = 'cart'
-SESSION_SAVE_EVERY_REQUEST = True  # Obliga a Django a guardar la sesión en cada cambio
-SESSION_COOKIE_AGE = 86400         # El carrito dura 24 horas
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False # No se borra al cerrar el navegador
+SESSION_SAVE_EVERY_REQUEST = True  
+SESSION_COOKIE_AGE = 86400         
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False 
 
 # Tipo de campo por defecto para IDs
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
