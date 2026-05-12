@@ -3,44 +3,77 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pago - SIGMA</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
         :root { --sigma-dark: #1a1a1a; --sigma-red: #801010; }
-        body { font-family: 'Open Sans', sans-serif; background: #f8f8f8; }
-        .payment-card { background: white; padding: 40px; border-radius: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 50px; }
-        .Montserrat { font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; }
-        .method-box { 
-            border: 1px solid #eee; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; 
-            display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: inherit;
-            width: 100%; text-align: left; background: none;
+        body { font-family: 'Open Sans', sans-serif; background: #f8f8f8; margin: 0; padding: 0; }
+        
+        .payment-card { 
+            background: white; 
+            padding: 30px 20px; 
+            border-radius: 0; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            margin-top: 20px;
+            margin-bottom: 40px;
         }
+        
+        .Montserrat { font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; }
+        
+        .method-box { 
+            border: 1px solid #eee; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            text-decoration: none; 
+            color: inherit;
+            width: 100%; 
+            text-align: left; 
+            background: none;
+        }
+        
         .method-box:hover { border-color: var(--sigma-dark); background: #fafafa; }
-        .total-amount { font-size: 24px; color: var(--sigma-red); }
-        /* Estilo para el contenedor de MP */
+        
+        .total-amount { font-size: 22px; color: var(--sigma-red); }
+        
+        /* Contenedor de Mercado Pago ajustado */
         #wallet_container {
-    margin-top: 15px;
-    min-height: 50px; /* Le da espacio al botón para cargarse */
-}
+            margin-top: 10px;
+            min-height: 48px;
+        }
+
+        /* Ajustes de texto para que nada se vea "apretado" en pantallas chicas */
+        @media (max-width: 576px) {
+            h3 { font-size: 1.2rem; }
+            .total-amount { font-size: 20px; }
+            .method-box strong { font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-6">
+        <div class="col-12 col-md-6">
             <div class="payment-card">
                 <h3 class="Montserrat text-center mb-4">MÉTODO DE PAGO</h3>
-                <p class="text-center mb-5 small text-muted">PEDIDO #{{ order.id }}</p>
+                <p class="text-center mb-4 small text-muted text-uppercase">PEDIDO #{{ order.id }}</p>
                 
                 <div class="d-flex justify-content-between mb-4 border-bottom pb-2">
-                    <span class="fw-bold">TOTAL A PAGAR:</span>
+                    <span class="fw-bold small">TOTAL A PAGAR:</span>
                     <span class="total-amount Montserrat">${{ order.get_total_cost }}</span>
                 </div>
 
                 <div class="mb-4">
-                    <label class="small fw-bold mb-2 d-block">PAGAR CON TARJETA O MERCADO PAGO</label>
+                    <label class="small fw-bold mb-2 d-block text-muted text-uppercase" style="font-size: 11px;">Pagar con Tarjeta o Mercado Pago</label>
                     <div id="wallet_container"></div>
                 </div>
 
@@ -49,13 +82,15 @@
                 <button class="method-box" data-bs-toggle="modal" data-bs-target="#transferModal">
                     <div>
                         <strong class="d-block Montserrat">TRANSFERENCIA BANCARIA</strong>
-                        <small class="text-muted">Obtené un 10% de descuento extra</small>
+                        <small class="text-muted" style="font-size: 12px;">Obtené un 10% de descuento extra</small>
                     </div>
                     <span class="badge bg-dark">10% OFF</span>
                 </button>
 
                 <div class="mt-4 text-center">
-                    <small class="text-muted text-uppercase">Tus datos están protegidos por encriptación SSL</small>
+                    <p class="text-muted text-uppercase mb-0" style="font-size: 9px; letter-spacing: 1px;">
+                        <i class="fas fa-lock"></i> Pago seguro procesado por Mercado Pago
+                    </p>
                 </div>
             </div>
         </div>
@@ -63,14 +98,13 @@
 </div>
 
 <div class="modal fade" id="transferModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-0">
+  <div class="modal-dialog modal-dialog-centered mx-3"> <div class="modal-content border-0 rounded-0">
       <div class="modal-header border-0">
-        <h5 class="Montserrat">DATOS BANCARIOS</h5>
+        <h5 class="Montserrat mb-0" style="font-size: 1rem;">DATOS BANCARIOS</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-4">
-        <p>Realizá la transferencia y enviá el comprobante por WhatsApp.</p>
+        <p class="small">Realizá la transferencia y enviá el comprobante por WhatsApp para que despachemos tu pedido.</p>
         <div class="bg-light p-3 border">
             <p class="mb-1 small text-muted">ALIAS:</p>
             <p class="fw-bold mb-3">SIGMA.ROPA.OK</p>
@@ -79,7 +113,7 @@
             <p class="mb-1 small text-muted">TITULAR:</p>
             <p class="fw-bold mb-0">SIGMA INDUMENTARIA</p>
         </div>
-        <a href="https://wa.me/TUNUMERO" class="btn btn-dark w-100 rounded-0 mt-3 Montserrat">ENVIAR COMPROBANTE</a>
+        <a href="https://wa.me/TUNUMERO" class="btn btn-dark w-100 rounded-0 mt-3 Montserrat py-3">ENVIAR COMPROBANTE</a>
       </div>
     </div>
   </div>
@@ -87,10 +121,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script>
-  // Usamos la variable que viene de Django (settings.py)
+  // Inicialización con la public_key dinámica que mandamos desde views.py
   const mp = new MercadoPago('{{ public_key }}', {
     locale: 'es-AR'
   });
@@ -99,7 +131,7 @@
   bricksBuilder.create("wallet", "wallet_container", {
     initialization: {
         preferenceId: "{{ preference_id }}",
-        redirectMode: "modal"
+        redirectMode: "modal" 
     },
     customization: {
         texts: {
