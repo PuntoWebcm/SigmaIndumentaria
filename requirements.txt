@@ -8,6 +8,7 @@ idna==3.14
 mercadopago==2.4.0
 packaging==26.2
 pillow==12.2.0
+psycopg2-binary==2.9.12
 requests==2.34.0
 sqlparse==0.5.5
 urllib3==2.7.0
