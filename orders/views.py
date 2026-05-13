@@ -75,15 +75,14 @@ def payment_selection(request):
 def payment_success(request):
     payment_id = request.GET.get('collection_id') or request.GET.get('payment_id')
     
-    # Obtenemos el ID del pedido que guardamos en la sesión antes de pagar
+    # Buscamos la última orden creada en esta sesión
     order_id = request.session.get('order_id')
     order = get_object_or_404(Order, id=order_id)
     
-    # Vaciamos el carrito
     cart = Cart(request)
     cart.clear()
     
     return render(request, 'orders/order/created.html', {
         'payment_id': payment_id,
-        'order': order,  # <--- Pasamos el pedido completo al HTML
+        'order': order
     })

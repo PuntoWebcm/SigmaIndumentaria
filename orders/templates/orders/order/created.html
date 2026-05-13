@@ -1,35 +1,47 @@
-{% extends "shop/base.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Gracias por tu compra! - SIGMA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f8f8; font-family: 'Open Sans', sans-serif; }
+        .success-card { background: white; padding: 40px 20px; border-radius: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 50px; }
+        .btn-whatsapp { background-color: #25D366; color: white; font-weight: 700; border: none; border-radius: 0; padding: 15px; }
+        .btn-whatsapp:hover { background-color: #128C7E; color: white; }
+    </style>
+</head>
+<body>
 
-{% block title %}Pago Exitoso - SIGMA{% endblock %}
-
-{% block content %}
-<div class="container mt-4 mb-5">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-11 col-md-8 text-center">
-            <div class="py-4">
-                <i class="fas fa-check-circle" style="font-size: 60px; color: #28a745;"></i>
-                <h1 class="fw-bold mt-3" style="color: #1a1a1a; font-size: 1.8rem;">¡PAGO RECIBIDO!</h1>
-                <p class="text-muted">Tu pedido en SIGMA ya está en proceso.</p>
-                
-                <div class="card border-0 bg-white p-4 my-4 shadow-sm">
-                    <p class="mb-1 small text-uppercase fw-bold text-muted">Resumen de Operación</p>
-                    <p class="mb-1"><strong>Pedido:</strong> #{{ order.id }}</p>
-                    <p class="mb-1"><strong>Total:</strong> ${{ order.get_total_cost }}</p>
-                    <p class="mb-0 small text-muted">ID Pago: {{ payment_id }}</p>
+        <div class="col-12 col-md-8 text-center">
+            <div class="success-card">
+                <i class="fas fa-check-circle mb-4" style="font-size: 70px; color: #28a745;"></i>
+                <h2 class="fw-bold text-uppercase" style="letter-spacing: 2px;">¡Pago Confirmado!</h2>
+                <p class="text-muted">Tu pedido en <strong>SIGMA</strong> ya está siendo preparado.</p>
+
+                <div class="alert alert-light border my-4 py-3">
+                    <p class="mb-1 small text-uppercase fw-bold">Resumen:</p>
+                    <p class="mb-1">Pedido: <strong>#{{ order.id }}</strong></p>
+                    <p class="mb-0">Monto: <strong>${{ order.get_total_cost }}</strong></p>
                 </div>
 
-                <a href="https://wa.me/5493584304880?text=%C2%A1Hola%20SIGMA!%20Acabo%20de%20realizar%20una%20compra.%20%0A%0A*Pedido:*%20%23{{ order.id }}%0A*Total:*%20%24{{ order.get_total_cost }}%0A*ID%20de%20Pago:*%20{{ payment_id }}" 
-                   class="btn btn-success w-100 py-3 mb-3" 
-                   style="background-color: #25D366; border: none; font-weight: 700; border-radius: 0;">
-                    <i class="fab fa-whatsapp"></i> NOTIFICAR COMPRA POR WHATSAPP
+                <a href="https://wa.me/54911XXXXXXXX?text=%C2%A1Hola%20SIGMA!%20Acabo%20de%20pagar%20mi%20pedido%20%23{{ order.id }}.%20ID%20de%20pago:%20{{ payment_id }}" 
+                   class="btn btn-whatsapp w-100 mb-3 text-uppercase">
+                    <i class="fab fa-whatsapp"></i> Avisar por WhatsApp
                 </a>
 
-                <a href="{% url 'shop:product_list' %}" class="btn btn-outline-dark w-100 py-3" style="border-radius: 0; font-weight: 700;">
-                    VOLVER AL INICIO
+                <a href="/" class="btn btn-outline-dark w-100 rounded-0 text-uppercase" style="font-size: 14px;">
+                    Volver a la tienda
                 </a>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
+
+</body>
+</html>
