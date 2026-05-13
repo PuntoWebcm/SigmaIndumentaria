@@ -1,6 +1,8 @@
+import json
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.contrib import messages  # Para los Toasts de éxito
+from django.contrib import messages
 from products.models import Product
 from .cart import Cart
 from .forms import CartAddProductForm
@@ -37,7 +39,9 @@ def cart_add(request, product_id):
 
 def cart_remove(request, product_id):
     cart = Cart(request)
-    size = request.GET.get('size')
+    # Cambiamos a POST si el formulario de borrado usa POST, 
+    # o mantenemos GET según cómo esté tu template.
+    size = request.POST.get('size') or request.GET.get('size')
     
     cart.remove(product_id, size=size)
     messages.info(request, "Producto eliminado del carrito.")
@@ -46,5 +50,21 @@ def cart_remove(request, product_id):
 
 def cart_detail(request):
     cart = Cart(request)
-    # IMPORTANTE: No debe haber cart.clear() aquí para que no se vacíe solo
     return render(request, 'cart/detail.html', {'cart': cart})
+
+# --- NUEVA FUNCIÓN PARA EL ENVÍO ---
+def cart_add_shipping(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            costo = int(data.get('costo', 0))
+            zona = data.get('zona', '')
+            
+            # Guardamos en la sesión para que orders/views.py lo pueda leer después
+            request.session['shipping_cost'] = costo
+            request.session['shipping_zona'] = zona
+            
+            return JsonResponse({'status': 'ok', 'costo': costo})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return JsonResponse({'status': 'error'}, status=405)

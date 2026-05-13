@@ -67,24 +67,9 @@
 
         /* Resumen Card */
         .summary-card { background: white; border: 1px solid #eee; padding: 30px; position: sticky; top: 100px; }
-        .btn-checkout { 
-            background: var(--sigma-dark); color: white; border: none; 
-            padding: 18px; width: 100%; display: block; text-decoration: none;
-            text-align: center; font-size: 0.9rem; transition: 0.3s;
-        }
-        .btn-checkout:hover { background: var(--sigma-red); color: white; }
-
-        .btn-back-link { 
-            color: white; font-size: 0.75rem; text-decoration: none; 
-            opacity: 0.8; transition: 0.3s; border-bottom: 1px solid transparent;
-        }
-        .btn-back-link:hover { opacity: 1; border-color: white; }
-
-        /* Trust Badges */
-        .trust-icons { opacity: 0.6; font-size: 1.4rem; display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
-
+        
         .btn-checkout {
-            background-color: #1a1a1a; /* Negro SIGMA */
+            background-color: #1a1a1a; 
             color: white !important;
             padding: 15px 20px;
             font-family: 'Montserrat', sans-serif;
@@ -97,8 +82,23 @@
         }
 
         .btn-checkout:hover {
-            background-color: #801010; /* Rojo SIGMA */
+            background-color: #801010; 
         }
+
+        .btn-back-link { 
+            color: white; font-size: 0.75rem; text-decoration: none; 
+            opacity: 0.8; transition: 0.3s; border-bottom: 1px solid transparent;
+        }
+        .btn-back-link:hover { opacity: 1; border-color: white; }
+
+        /* Calculador */
+        .calc-box { border: 1px solid #eee; padding: 15px; margin-bottom: 20px; background: #fff; }
+        .cp-input { border-radius: 0; border: 1px solid #ddd; font-size: 0.8rem; }
+        .cp-btn { border-radius: 0; font-family: 'Montserrat'; font-size: 0.7rem; font-weight: 700; }
+
+        /* Trust Badges */
+        .trust-icons { opacity: 0.6; font-size: 1.4rem; display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+
     </style>
 </head>
 <body>
@@ -158,6 +158,15 @@
             </div>
 
             <div class="col-lg-4">
+                <div class="calc-box shadow-sm">
+                    <label class="Montserrat small fw-bold mb-2 d-block" style="font-size: 0.7rem; letter-spacing: 1px;">CALCULAR ENVÍO</label>
+                    <div class="input-group">
+                        <input type="text" id="cp-input" class="form-control cp-input" placeholder="Tu código postal">
+                        <button class="btn btn-dark cp-btn" onclick="calcularEnvio()">CALCULAR</button>
+                    </div>
+                    <div id="resultado-envio" class="mt-3 Montserrat" style="display:none; font-size: 0.75rem; font-weight: 700;"></div>
+                </div>
+
                 <div class="summary-card shadow-sm">
                     <h6 class="fw-bold mb-4 Montserrat">RESUMEN</h6>
                     <div class="d-flex justify-content-between mb-3 small">
@@ -165,28 +174,43 @@
                         <span>${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
                     </div>
                     
-                    <div class="d-flex justify-content-between mb-1 small">
-                        <span class="text-muted">Envío</span>
-                        <span class="text-dark fw-bold" style="font-size: 0.75rem;">A COORDINAR</span>
-                    </div>
-                    <p class="text-muted" style="font-size: 0.65rem; line-height: 1.2;">
-                        *El costo de envío se abona por separado tras coordinar por WhatsApp.
-                    </p>
+                    {% if cart.get_total_price < 50000 %}
+                        <div class="p-3 mb-3 text-center" style="background-color: #fff5f5; border: 1px solid #feb2b2;">
+                            <p class="mb-1 small Montserrat" style="color: #c53030; font-weight: 700; letter-spacing: 1px;">
+                                MÍNIMO DE COMPRA: $50.000
+                            </p>
+                            <p class="mb-0 text-muted" style="font-size: 0.7rem;">
+                                El monto mínimo para envíos a todo el país es de $50.000.
+                            </p>
+                        </div>
+                        
+                        <button class="btn btn-secondary w-100 p-3 rounded-0 opacity-50" disabled style="font-family: 'Montserrat'; font-size: 0.8rem; cursor: not-allowed; letter-spacing: 1px; margin-top: 20px;">
+                            MÍNIMO NO ALCANZADO
+                        </button>
+                    {% else %}
+                        <div class="d-flex justify-content-between mb-1 small">
+                            <span class="text-muted">Envío</span>
+                            <span class="text-dark fw-bold" style="font-size: 0.75rem;">A COORDINAR</span>
+                        </div>
+                        <p class="text-muted" style="font-size: 0.65rem; line-height: 1.2;">
+                            *El costo de envío se abona por separado tras coordinar por WhatsApp.
+                        </p>
 
-                    <hr class="my-4">
-                    <div class="d-flex justify-content-between mb-4">
-                        <span class="fw-bold Montserrat">TOTAL</span>
-                        <span class="fw-bold fs-5">${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
-                    </div>
-                    
-                    <div class="p-2 mb-3 text-center" style="background-color: #f8f9fa; border: 1px dashed #ccc;">
-                        <i class="bi bi-whatsapp me-2"></i>
-                        <span class="small Montserrat" style="font-size: 0.7rem; font-weight: 600;">COORDINAMOS EL ENVÍO POR WHATSAPP</span>
-                    </div>
+                        <hr class="my-4">
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fw-bold Montserrat">TOTAL</span>
+                            <span class="fw-bold fs-5">${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
+                        </div>
+                        
+                        <div class="p-2 mb-3 text-center" style="background-color: #f8f9fa; border: 1px dashed #ccc;">
+                            <i class="bi bi-whatsapp me-2"></i>
+                            <span class="small Montserrat" style="font-size: 0.7rem; font-weight: 600;">COORDINAMOS EL ENVÍO POR WHATSAPP</span>
+                        </div>
 
-                    <a href="{% url 'orders:order_create' %}" class="btn-checkout text-decoration-none d-block text-center">
-                             FINALIZAR COMPRA
-                    </a>
+                        <a href="{% url 'orders:order_create' %}" class="btn-checkout text-decoration-none d-block text-center">
+                                 FINALIZAR COMPRA
+                        </a>
+                    {% endif %}
 
                     <div class="trust-icons">
                         <i class="bi bi-shield-check" title="Compra Segura"></i>
@@ -201,6 +225,42 @@
     <footer class="py-5 bg-white border-top text-center mt-5">
         <p class="small Montserrat fw-bold opacity-50">&copy; 2026 SIGMA INDUMENTARIA</p>
     </footer>
+
+    <script>
+function calcularEnvio() {
+    const cp = document.getElementById('cp-input').value;
+    const resultado = document.getElementById('resultado-envio');
+    let costo = 0;
+    let zona = "";
+
+    if (!cp) { alert("Ingresá un CP"); return; }
+
+    // Definir costos
+    if (cp >= 5800 && cp <= 5809) { costo = 0; zona = "Río Cuarto (Retiro)"; }
+    else if (cp >= 5000 && cp <= 5999) { costo = 5500; zona = "Provincia de Córdoba"; }
+    else if (cp >= 1000 && cp <= 1899) { costo = 7200; zona = "Buenos Aires / CABA"; }
+    else { costo = 8500; zona = "Resto del País"; }
+
+    // Mostrar en pantalla
+    resultado.style.display = 'block';
+    resultado.innerHTML = `<i class='bi bi-truck'></i> ${zona}: $${costo}`;
+    
+    // ENVIAR EL COSTO AL SERVIDOR (Para que Django lo sepa)
+    fetch("{% url 'cart:cart_add_shipping' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ "costo": costo, "zona": zona })
+    }).then(response => {
+        if(response.ok) { 
+            // Opcional: Recargar el resumen para mostrar el nuevo total
+            location.reload(); 
+        }
+    });
+}
+</script>
 
 </body>
 </html>
