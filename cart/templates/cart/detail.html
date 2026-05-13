@@ -91,10 +91,22 @@
         }
         .btn-back-link:hover { opacity: 1; border-color: white; }
 
-        /* Calculador */
-        .calc-box { border: 1px solid #eee; padding: 15px; margin-bottom: 20px; background: #fff; }
-        .cp-input { border-radius: 0; border: 1px solid #ddd; font-size: 0.8rem; }
-        .cp-btn { border-radius: 0; font-family: 'Montserrat'; font-size: 0.7rem; font-weight: 700; }
+        /* Caja informativa de Envío */
+        .shipping-info-box { border: 1px solid #eee; padding: 20px; margin-bottom: 20px; background: #fff; text-align: center; }
+        
+        .btn-wa-consult {
+            border: 1px solid #25D366;
+            color: #25D366;
+            text-decoration: none;
+            font-family: 'Montserrat';
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 10px;
+            display: inline-block;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-wa-consult:hover { background: #25D366; color: white; }
 
         /* Trust Badges */
         .trust-icons { opacity: 0.6; font-size: 1.4rem; display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
@@ -158,13 +170,16 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="calc-box shadow-sm">
-                    <label class="Montserrat small fw-bold mb-2 d-block" style="font-size: 0.7rem; letter-spacing: 1px;">CALCULAR ENVÍO</label>
-                    <div class="input-group">
-                        <input type="text" id="cp-input" class="form-control cp-input" placeholder="Tu código postal">
-                        <button class="btn btn-dark cp-btn" onclick="calcularEnvio()">CALCULAR</button>
-                    </div>
-                    <div id="resultado-envio" class="mt-3 Montserrat" style="display:none; font-size: 0.75rem; font-weight: 700;"></div>
+                <div class="shipping-info-box shadow-sm">
+                    <i class="bi bi-truck fs-3 mb-2 d-block text-dark"></i>
+                    <h6 class="Montserrat fw-bold mb-1" style="font-size: 0.8rem; letter-spacing: 1px;">ENVÍO VÍA CARGO</h6>
+                    <p class="text-muted mb-3" style="font-size: 0.7rem; line-height: 1.4;">
+                        Realizamos envíos a todo el país. El costo se abona <b>al retirar en agencia</b>.
+                    </p>
+                    <a href="https://wa.me/5493584304880?text=Hola%20SIGMA!%20Quiero%20consultar%20el%20costo%20estimado%20de%20envío%20por%20Vía%20Cargo%20a%20mi%20ciudad." 
+                       target="_blank" class="btn-wa-consult">
+                        <i class="bi bi-whatsapp me-2"></i> CONSULTAR COSTO ESTIMADO
+                    </a>
                 </div>
 
                 <div class="summary-card shadow-sm">
@@ -190,10 +205,10 @@
                     {% else %}
                         <div class="d-flex justify-content-between mb-1 small">
                             <span class="text-muted">Envío</span>
-                            <span class="text-dark fw-bold" style="font-size: 0.75rem;">A COORDINAR</span>
+                            <span class="text-dark fw-bold" style="font-size: 0.75rem;">A PAGAR EN AGENCIA</span>
                         </div>
                         <p class="text-muted" style="font-size: 0.65rem; line-height: 1.2;">
-                            *El costo de envío se abona por separado tras coordinar por WhatsApp.
+                            *El envío se coordina tras la compra y se paga al recibir el paquete.
                         </p>
 
                         <hr class="my-4">
@@ -203,8 +218,8 @@
                         </div>
                         
                         <div class="p-2 mb-3 text-center" style="background-color: #f8f9fa; border: 1px dashed #ccc;">
-                            <i class="bi bi-whatsapp me-2"></i>
-                            <span class="small Montserrat" style="font-size: 0.7rem; font-weight: 600;">COORDINAMOS EL ENVÍO POR WHATSAPP</span>
+                            <i class="bi bi-box-seam me-2"></i>
+                            <span class="small Montserrat" style="font-size: 0.7rem; font-weight: 600;">COORDINAMOS POR WHATSAPP</span>
                         </div>
 
                         <a href="{% url 'orders:order_create' %}" class="btn-checkout text-decoration-none d-block text-center">
@@ -225,82 +240,6 @@
     <footer class="py-5 bg-white border-top text-center mt-5">
         <p class="small Montserrat fw-bold opacity-50">&copy; 2026 SIGMA INDUMENTARIA</p>
     </footer>
-
-    <script>
-function calcularEnvio() {
-    const cp = document.getElementById('cp-input').value;
-    const resultado = document.getElementById('resultado-envio');
-    const totalElemento = document.querySelector('.fs-5.fw-bold'); 
-    let costo = 0;
-    let zona = "";
-
-    if (!cp) { 
-        alert("Por favor, ingresá un código postal."); 
-        return; 
-    }
-
-    // --- LÓGICA DE PRECIOS VÍA CARGO ---
-    const cpNum = parseInt(cp);
-
-    // 1. LOCAL: Río Cuarto (CP 5800)
-    if (cpNum >= 5800 && cpNum <= 5809) {
-        costo = 0; 
-        zona = "📍 RÍO CUARTO: ENVÍO GRATIS (Retiro en local)";
-    } 
-    // 2. REGIONAL: Resto de Córdoba y provincias limítrofes (Santa Fe, San Luis)
-    else if (cpNum >= 5000 && cpNum <= 6999) {
-        costo = 6500; 
-        zona = "🚚 CÓRDOBA / CENTRO: $6.500 (Vía Cargo)";
-    } 
-    // 3. CAPITAL Y GBA: Buenos Aires y CABA
-    else if (cpNum >= 1000 && cpNum <= 1899) {
-        costo = 7800; 
-        zona = "🚚 BS AS / CABA: $7.800 (Vía Cargo)";
-    } 
-    // 4. DISTANTE: Patagonia, Norte Argentino y Mendoza
-    else if ((cpNum >= 4000 && cpNum <= 4999) || (cpNum >= 8000)) {
-        costo = 9500; 
-        zona = "🚚 NORTE / PATAGONIA: $9.500 (Vía Cargo)";
-    } 
-    // 5. RESTO DEL PAÍS
-    else {
-        costo = 8200; 
-        zona = "🚚 RESTO DEL PAÍS: $8.200 (Vía Cargo)";
-    }
-
-    // --- INTERFAZ VISUAL ---
-    resultado.style.display = 'block';
-    resultado.style.padding = '12px';
-    resultado.style.backgroundColor = '#f8f9fa';
-    resultado.innerHTML = `<i class='bi bi-box-seam me-2'></i> ${zona}`;
-    resultado.style.color = (costo === 0) ? "#198754" : "#1a1a1a";
-
-    // Actualizar el texto del "Envío" en el resumen
-    const envioDisplay = document.querySelector('span[style*="font-size: 0.75rem"]');
-    if (envioDisplay) {
-        envioDisplay.innerText = (costo === 0) ? "GRATIS" : "$" + costo.toLocaleString('es-AR');
-    }
-
-    // --- ENVIAR A DJANGO ---
-    fetch("{% url 'cart:cart_add_shipping' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ "costo": costo, "zona": zona })
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Actualizar el Total final sumando el Subtotal + Costo
-        const subtotal = parseFloat("{{ cart.get_total_price }}");
-        const nuevoTotal = subtotal + costo;
-        if (totalElemento) {
-            totalElemento.innerText = "$" + nuevoTotal.toLocaleString('es-AR').split(',')[0];
-        }
-    });
-}
-</script>
 
 </body>
 </html>

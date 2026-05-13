@@ -20,16 +20,11 @@ def order_create(request):
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
         if form.is_valid():
-            # Usamos commit=False para poder agregar el envío antes de guardar
             order = form.save(commit=False)
             
-            # --- RECUPERAR COSTO DE ENVÍO DE LA SESIÓN ---
-            # Si el cliente usó el calculador, el dato estará acá. 
-            # Si no, por defecto es 0.
-            shipping_cost = request.session.get('shipping_cost', 0)
-            order.shipping_cost = shipping_cost
-            
-            order.save() # Ahora sí guardamos en la DB
+            # El envío ahora es siempre 0 porque se paga en la agencia al retirar
+            order.shipping_cost = 0 
+            order.save()
             
             for item in cart:
                 OrderItem.objects.create(
@@ -40,9 +35,11 @@ def order_create(request):
                     size=item['size']
                 )
             
-            # Limpiamos el envío de la sesión una vez usado
+            # Limpiamos cualquier dato de envío residual de la sesión
             if 'shipping_cost' in request.session:
                 del request.session['shipping_cost']
+            if 'shipping_zona' in request.session:
+                del request.session['shipping_zona']
                 
             request.session['order_id'] = order.id
             return redirect('orders:payment_selection')
@@ -56,8 +53,7 @@ def payment_selection(request):
     
     sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
 
-    # Mercado Pago ahora toma el costo TOTAL (Productos + Envío)
-    # gracias al cambio que hicimos en el método get_total_cost del modelo.
+    # El unit_price aquí será solo el total de productos (Envío = 0)
     preference_data = {
         "items": [
             {
@@ -109,7 +105,7 @@ def payment_success(request):
         producto.stock = max(0, producto.stock - item.quantity)
         producto.save()
 
-    # --- ENVÍO DE WHATSAPP CON DATOS COMPLETOS ---
+    # --- ENVÍO DE WHATSAPP ---
     try:
         mi_numero = "5493584304880"
         mi_apikey = "2153232"
@@ -122,8 +118,8 @@ def payment_success(request):
             f"📍 *Dirección:* {order.address}\n"
             f"🌆 *Ciudad:* {order.city} ({order.postal_code})\n\n"
             f"🛒 *Productos:*\n{detalle_productos}\n"
-            f"🚚 *Envío cobrado:* ${order.shipping_cost}\n" # <-- AHORA SE INCLUYE
             f"💰 *Total Cobrado:* ${float(order.get_total_cost())}\n"
+            f"🚚 *Envío:* A PAGAR EN DESTINO\n" # Aclaración para vos
             f"💳 *Pago ID:* {payment_id}"
         )
 
