@@ -5,6 +5,7 @@ from django.conf import settings  # Importamos los settings para usar las llaves
 from .models import OrderItem, Order
 from .forms import OrderCreateForm
 from cart.cart import Cart
+from urllib.parse import quote
 
 # --- CONFIGURACIÓN DE DOMINIO ---
 # En Render, Django usa esto para saber a dónde volver tras el pago
@@ -80,35 +81,45 @@ def payment_success(request):
     order_id = request.session.get('order_id')
     order = get_object_or_404(Order, id=order_id)
     
-    # --- ARMAMOS EL DETALLE DE PRODUCTOS Y DESCONTAMOS STOCK ---
+    # --- DETALLE DE PRODUCTOS Y DESCUENTO DE STOCK ---
     items = order.items.all() 
     detalle_productos = ""
     
     for item in items:
-        # 1. Armamos el detalle para el mensaje de WhatsApp
-        detalle_productos += f"- {item.quantity}x {item.product.name}%0A"
-
-        # 2. LÓGICA DE DESCUENTO DE STOCK
+        detalle_productos += f"- {item.quantity}x {item.product.name}\n"
+        # Descuento de stock
         producto = item.product
-        # Restamos la cantidad comprada al stock actual
-        producto.stock -= item.quantity
-        # Guardamos el cambio en la base de datos
+        producto.stock = max(0, producto.stock - item.quantity)
         producto.save()
 
-    # --- LÓGICA DE NOTIFICACIÓN AUTOMÁTICA (CallMeBot) ---
+    # --- ENVÍO DE WHATSAPP (VERSIÓN BLINDADA) ---
     try:
         mi_numero = "5493584163655"
         mi_apikey = "8706117"
         
-        mensaje_bot = f"🚀 *NUEVA VENTA SIGMA*%0A%0A" \
-                      f"📦 *Pedido:* #{order.id}%0A" \
-                      f"🛒 *Productos:*%0A{detalle_productos}%0A" \
-                      f"💰 *Total:* ${order.get_total_cost()}%0A" \
-                      f"💳 *Pago ID:* {payment_id}"
+        # Texto limpio (sin %0A, usamos \n normales)
+        mensaje_texto = (
+            f"🚀 *NUEVA VENTA SIGMA*\n\n"
+            f"📦 *Pedido:* #{order.id}\n"
+            f"🛒 *Productos:*\n{detalle_productos}\n"
+            f"💰 *Total:* ${order.get_total_cost()}\n"
+            f"💳 *Pago ID:* {payment_id}"
+        )
 
-        url_bot = f"https://api.callmebot.com/whatsapp.php?phone={mi_numero}&text={mensaje_bot}&apikey={mi_apikey}"
+        # La función quote limpia el texto para que la URL sea válida
+        mensaje_url = quote(mensaje_texto)
         
-        requests.get(url_bot, timeout=10)
+        url_bot = f"https://api.callmebot.com/whatsapp.php?phone={mi_numero}&text={mensaje_url}&apikey={mi_apikey}"
+        
+        # Hacemos la petición a CallMeBot
+        response = requests.get(url_bot, timeout=10)
+        
+        # Esto nos sirve para ver en los Logs de Render si el bot aceptó el mensaje
+        if response.status_code == 200:
+            print("WhatsApp enviado con éxito")
+        else:
+            print(f"Error en CallMeBot: {response.status_code} - {response.text}")
+
     except Exception as e:
         print(f"Error enviando WhatsApp: {e}")
     # ----------------------------------------------------
