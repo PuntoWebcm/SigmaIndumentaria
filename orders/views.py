@@ -76,24 +76,34 @@ def payment_selection(request):
 def payment_success(request):
     payment_id = request.GET.get('collection_id') or request.GET.get('payment_id')
     
-    # Buscamos la última orden creada en esta sesión
+    # Buscamos la orden
     order_id = request.session.get('order_id')
     order = get_object_or_404(Order, id=order_id)
+    
+    # --- ARMAMOS EL DETALLE DE PRODUCTOS ---
+    # Obtenemos todos los productos asociados a esta orden
+    items = order.items.all() 
+    detalle_productos = ""
+    
+    for item in items:
+        # Esto arma una línea por producto: "- 1x Sweater rallado"
+        detalle_productos += f"- {item.quantity}x {item.product.name}%0A"
 
     # --- LÓGICA DE NOTIFICACIÓN AUTOMÁTICA (CallMeBot) ---
     try:
-        # REEMPLAZA ESTOS DOS DATOS CON LOS TUYOS
-        mi_numero = "5493584163655"  # Tu número (ej: 5491112345678)
-        mi_apikey = "8706117"        # Tu API Key de CallMeBot
+        mi_numero = "5493584163655"  # Formato internacional correcto
+        mi_apikey = "8706117"        # Tu API Key
         
+        # Armamos el mensaje con el detalle
         mensaje_bot = f"🚀 *NUEVA VENTA SIGMA*%0A%0A" \
                       f"📦 *Pedido:* #{order.id}%0A" \
+                      f"🛒 *Productos:*%0A{detalle_productos}%0A" \
                       f"💰 *Total:* ${order.get_total_cost()}%0A" \
                       f"💳 *Pago ID:* {payment_id}"
 
+        # CORRECCIÓN: Usamos {mi_numero} para que incluya el 549
         url_bot = f"https://api.callmebot.com/whatsapp.php?phone={mi_numero}&text={mensaje_bot}&apikey={mi_apikey}"
         
-        # Envía el mensaje de forma silenciosa
         requests.get(url_bot, timeout=10)
     except Exception as e:
         print(f"Error enviando WhatsApp: {e}")
