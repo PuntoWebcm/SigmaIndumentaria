@@ -230,22 +230,29 @@
 function calcularEnvio() {
     const cp = document.getElementById('cp-input').value;
     const resultado = document.getElementById('resultado-envio');
+    const totalElemento = document.querySelector('.fs-5.fw-bold'); // El elemento que muestra el Total
     let costo = 0;
     let zona = "";
 
-    if (!cp) { alert("Ingresá un CP"); return; }
+    if (!cp) { alert("Por favor, ingresá un código postal."); return; }
 
-    // Definir costos
-    if (cp >= 5800 && cp <= 5809) { costo = 0; zona = "Río Cuarto (Retiro)"; }
-    else if (cp >= 5000 && cp <= 5999) { costo = 5500; zona = "Provincia de Córdoba"; }
-    else if (cp >= 1000 && cp <= 1899) { costo = 7200; zona = "Buenos Aires / CABA"; }
-    else { costo = 8500; zona = "Resto del País"; }
+    // Lógica de precios
+    if (cp >= 5800 && cp <= 5809) { costo = 0; zona = "RÍO CUARTO: ENVÍO GRATIS"; }
+    else if (cp >= 5000 && cp <= 5999) { costo = 5500; zona = "PROV. CÓRDOBA: $5.500"; }
+    else if (cp >= 1000 && cp <= 1899) { costo = 7200; zona = "BS AS / CABA: $7.200"; }
+    else { costo = 8500; zona = "RESTO DEL PAÍS: $8.500"; }
 
-    // Mostrar en pantalla
+    // 1. Mostrar resultado fijo
     resultado.style.display = 'block';
-    resultado.innerHTML = `<i class='bi bi-truck'></i> ${zona}: $${costo}`;
-    
-    // ENVIAR EL COSTO AL SERVIDOR (Para que Django lo sepa)
+    resultado.style.padding = '10px';
+    resultado.style.backgroundColor = '#f8f9fa';
+    resultado.innerHTML = `<i class='bi bi-truck me-2'></i> ${zona}`;
+    resultado.style.color = (costo === 0) ? "#198754" : "#1a1a1a";
+
+    // 2. Actualizar el "Envío" en el resumen visualmente
+    document.querySelector('span[style*="font-size: 0.75rem"]').innerText = (costo === 0) ? "GRATIS" : "$" + costo.toLocaleString('es-AR');
+
+    // 3. ENVIAR A DJANGO (Sin recargar la página)
     fetch("{% url 'cart:cart_add_shipping' %}", {
         method: "POST",
         headers: {
@@ -253,11 +260,14 @@ function calcularEnvio() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ "costo": costo, "zona": zona })
-    }).then(response => {
-        if(response.ok) { 
-            // Opcional: Recargar el resumen para mostrar el nuevo total
-            location.reload(); 
-        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Envío guardado en sesión");
+        // Opcional: Si querés que el total se sume visualmente ahora mismo:
+        const subtotal = parseFloat("{{ cart.get_total_price }}");
+        const nuevoTotal = subtotal + costo;
+        totalElemento.innerText = "$" + nuevoTotal.toLocaleString('es-AR').split(',')[0];
     });
 }
 </script>
