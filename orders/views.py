@@ -1,4 +1,5 @@
 import mercadopago
+import requests  # <-- Agregado para el bot de WhatsApp
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings  # Importamos los settings para usar las llaves de Render
 from .models import OrderItem, Order
@@ -78,6 +79,25 @@ def payment_success(request):
     # Buscamos la última orden creada en esta sesión
     order_id = request.session.get('order_id')
     order = get_object_or_404(Order, id=order_id)
+
+    # --- LÓGICA DE NOTIFICACIÓN AUTOMÁTICA (CallMeBot) ---
+    try:
+        # REEMPLAZA ESTOS DOS DATOS CON LOS TUYOS
+        mi_numero = "5493584163655"  # Tu número (ej: 5491112345678)
+        mi_apikey = "8706117"        # Tu API Key de CallMeBot
+        
+        mensaje_bot = f"🚀 *NUEVA VENTA SIGMA*%0A%0A" \
+                      f"📦 *Pedido:* #{order.id}%0A" \
+                      f"💰 *Total:* ${order.get_total_cost()}%0A" \
+                      f"💳 *Pago ID:* {payment_id}"
+
+        url_bot = f"https://api.callmebot.com/whatsapp.php?phone={mi_numero}&text={mensaje_bot}&apikey={mi_apikey}"
+        
+        # Envía el mensaje de forma silenciosa
+        requests.get(url_bot, timeout=10)
+    except Exception as e:
+        print(f"Error enviando WhatsApp: {e}")
+    # ----------------------------------------------------
     
     cart = Cart(request)
     cart.clear()
