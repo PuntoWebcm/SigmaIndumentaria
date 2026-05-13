@@ -102,7 +102,7 @@ def payment_success(request):
             f"🚀 *NUEVA VENTA SIGMA*\n\n"
             f"📦 *Pedido:* #{order.id}\n"
             f"🛒 *Productos:*\n{detalle_productos}\n"
-            f"💰 *Total:* ${order.get_total_cost()}\n"
+            f"💰 *Total:* ${float(order.get_total_cost())}\n"
             f"💳 *Pago ID:* {payment_id}"
         )
 
