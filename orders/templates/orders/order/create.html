@@ -7,6 +7,8 @@
     <title>Checkout - SIGMA</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <style>
         :root { --sigma-dark: #1a1a1a; --sigma-red: #801010; --sigma-gray: #f8f8f8; }
         body { font-family: 'Open Sans', sans-serif; background-color: var(--sigma-gray); color: #333; }
@@ -22,7 +24,7 @@
             margin-bottom: 60px;
         }
 
-        /* Estilizamos los inputs de Django para que sean PRO */
+        /* Estilizamos los inputs de Django */
         input {
             width: 100%;
             padding: 12px 15px;
@@ -33,7 +35,7 @@
             font-size: 14px;
             outline: none;
             transition: all 0.3s;
-            display: block; /* Para que ocupen todo el ancho */
+            display: block;
         }
 
         input:focus { border-color: var(--sigma-dark); border-width: 1.5px; }
@@ -67,6 +69,13 @@
         
         .header-simple { padding: 30px 0; text-align: center; border-bottom: 1px solid #eee; background: white; }
         .header-simple a { text-decoration: none; color: black; font-size: 24px; font-weight: 700; letter-spacing: 4px; }
+
+        .shipping-info {
+            background-color: #fff9f9;
+            border-left: 3px solid var(--sigma-red);
+            padding: 15px;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
@@ -79,8 +88,15 @@
         <div class="row justify-content-center">
             <div class="col-lg-7">
                 <div class="checkout-card">
-                    <h3 class="text-center mb-5">Detalles de Envío</h3>
+                    <h3 class="text-center mb-4">Detalles de Envío</h3>
                     
+                    <div class="shipping-info">
+                        <p class="mb-0 small" style="font-family: 'Montserrat'; font-weight: 600;">
+                            <i class="bi bi-info-circle-fill me-2"></i> 
+                            EL COSTO DE ENVÍO SE COORDINARÁ POR WHATSAPP LUEGO DEL PAGO.
+                        </p>
+                    </div>
+
                     <form action="." method="post">
                         {% csrf_token %}
                         
@@ -112,8 +128,14 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-confirm">Finalizar Pedido</button>
+                        <button type="submit" class="btn-confirm">Ir a Pagar</button>
                     </form>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'cart:cart_detail' %}" class="text-muted small text-decoration-none">
+                            <i class="bi bi-arrow-left me-1"></i> Volver al carrito
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
