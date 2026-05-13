@@ -19,8 +19,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',  # 1. Este primero
-    'cloudinary',          # 2. Este segundo (SUBILO ACÁ)
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'products',
@@ -88,19 +86,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# --- CONFIGURACIÓN DE CLOUDINARY (MEDIA) ---
-# Reemplazá 'tu_cloud_name', 'tu_api_key' y 'tu_api_secret' con tus datos reales de Cloudinary
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dbw4tboih',
-    'API_KEY': '371985646845222',
-    'API_SECRET': 'Vqf5SPvkL82Z9mAwC0FaI4JH-Uo'
-}
-
-# Esta línea le dice a Django que las fotos de productos se guarden en Cloudinary
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
+# --- CONFIGURACIÓN DE ARCHIVOS MULTIMEDIA (USANDO DISK DE RENDER) ---
 MEDIA_URL = '/media/'
-# MEDIA_ROOT ya no es necesario para producción con Cloudinary, pero lo dejamos por compatibilidad
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # --- CONFIGURACIÓN CRÍTICA DEL CARRITO ---
