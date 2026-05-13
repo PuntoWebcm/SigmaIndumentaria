@@ -19,10 +19,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',  # <--- AGREGADO: Debe ir antes de staticfiles
+    'cloudinary_storage',  # 1. Este primero
+    'cloudinary',          # 2. Este segundo (SUBILO ACÁ)
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'cloudinary',          # <--- AGREGADO
     'products',
     'cart',
     'orders',
