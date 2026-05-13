@@ -94,8 +94,8 @@ def payment_success(request):
 
     # --- ENVÍO DE WHATSAPP (VERSIÓN BLINDADA) ---
     try:
-        mi_numero = "5493584163655"
-        mi_apikey = "8706117"
+        mi_numero = "5493584304880"
+        mi_apikey = "2153232"
         
         # Texto limpio (sin %0A, usamos \n normales)
         mensaje_texto = (
