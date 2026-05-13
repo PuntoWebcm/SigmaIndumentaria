@@ -149,24 +149,31 @@
                 <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mt-4">
                     {% csrf_token %}
                     
-                    <div class="d-flex align-items-center mb-4">
-                        <label for="quantity" class="product-label small fw-bold text-uppercase me-3 mb-0">Cantidad:</label>
-                        <div style="width: 80px;">
-                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control rounded-0 border-dark text-center fw-bold">
+                    {% if product.stock > 0 %}
+                        <div class="d-flex align-items-center mb-4">
+                            <label for="quantity" class="product-label small fw-bold text-uppercase me-3 mb-0">Cantidad:</label>
+                            <div style="width: 80px;">
+                                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control rounded-0 border-dark text-center fw-bold">
+                            </div>
+                            <div class="ms-3">
+                                {% if product.stock <= 5 %}
+                                    <span class="badge bg-warning text-dark Montserrat fw-bold">¡ÚLTIMAS {{ product.stock }} UNIDADES!</span>
+                                {% else %}
+                                    <span class="small text-muted">({{ product.stock }} unidades disponibles)</span>
+                                {% endif %}
+                            </div>
                         </div>
-                        <span class="small text-muted ms-3">({{ product.stock }} unidades disponibles)</span>
-                    </div>
 
-                    <div class="d-grid gap-3">
-                        {% if product.stock > 0 %}
+                        <div class="d-grid gap-3">
                             <button type="submit" class="btn btn-sigma btn-lg">
                                 <i class="bi bi-bag-plus me-2"></i> Añadir al Carrito
                             </button>
-                        {% else %}
-                            <button type="button" class="btn btn-secondary btn-lg rounded-0" disabled>
-                                SIN STOCK TEMPORALMENTE
+                    {% else %}
+                        <div class="d-grid gap-3 mt-4">
+                            <button type="button" class="btn btn-secondary btn-lg rounded-0 py-3" disabled style="opacity: 0.7;">
+                                <i class="bi bi-exclamation-triangle me-2"></i> SIN STOCK TEMPORALMENTE
                             </button>
-                        {% endif %}
+                    {% endif %}
                         <a href="{% url 'product_list' %}" class="btn btn-outline-sigma py-3">
                             <i class="bi bi-arrow-left me-2"></i> Volver a la colección
                         </a>
@@ -205,13 +212,11 @@
 </div>
 
 <script>
-    // Auto-ocultar el mensaje después de 4 segundos
     document.addEventListener('DOMContentLoaded', function () {
         var toastElList = [].slice.call(document.querySelectorAll('.toast'))
         var toastList = toastElList.map(function (toastEl) {
             return new bootstrap.Toast(toastEl, { delay: 4000 })
         });
-        // Si quieres que se cierren solos, Bootstrap ya lo hace con 'show'
         setTimeout(function() {
             toastElList.forEach(t => {
                 var bsToast = bootstrap.Toast.getInstance(t);

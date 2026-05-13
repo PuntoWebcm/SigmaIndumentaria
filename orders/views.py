@@ -80,28 +80,32 @@ def payment_success(request):
     order_id = request.session.get('order_id')
     order = get_object_or_404(Order, id=order_id)
     
-    # --- ARMAMOS EL DETALLE DE PRODUCTOS ---
-    # Obtenemos todos los productos asociados a esta orden
+    # --- ARMAMOS EL DETALLE DE PRODUCTOS Y DESCONTAMOS STOCK ---
     items = order.items.all() 
     detalle_productos = ""
     
     for item in items:
-        # Esto arma una línea por producto: "- 1x Sweater rallado"
+        # 1. Armamos el detalle para el mensaje de WhatsApp
         detalle_productos += f"- {item.quantity}x {item.product.name}%0A"
+
+        # 2. LÓGICA DE DESCUENTO DE STOCK
+        producto = item.product
+        # Restamos la cantidad comprada al stock actual
+        producto.stock -= item.quantity
+        # Guardamos el cambio en la base de datos
+        producto.save()
 
     # --- LÓGICA DE NOTIFICACIÓN AUTOMÁTICA (CallMeBot) ---
     try:
-        mi_numero = "5493584163655"  # Formato internacional correcto
-        mi_apikey = "8706117"        # Tu API Key
+        mi_numero = "5493584163655"
+        mi_apikey = "8706117"
         
-        # Armamos el mensaje con el detalle
         mensaje_bot = f"🚀 *NUEVA VENTA SIGMA*%0A%0A" \
                       f"📦 *Pedido:* #{order.id}%0A" \
                       f"🛒 *Productos:*%0A{detalle_productos}%0A" \
                       f"💰 *Total:* ${order.get_total_cost()}%0A" \
                       f"💳 *Pago ID:* {payment_id}"
 
-        # CORRECCIÓN: Usamos {mi_numero} para que incluya el 549
         url_bot = f"https://api.callmebot.com/whatsapp.php?phone={mi_numero}&text={mensaje_bot}&apikey={mi_apikey}"
         
         requests.get(url_bot, timeout=10)
