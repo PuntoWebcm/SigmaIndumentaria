@@ -230,29 +230,58 @@
 function calcularEnvio() {
     const cp = document.getElementById('cp-input').value;
     const resultado = document.getElementById('resultado-envio');
-    const totalElemento = document.querySelector('.fs-5.fw-bold'); // El elemento que muestra el Total
+    const totalElemento = document.querySelector('.fs-5.fw-bold'); 
     let costo = 0;
     let zona = "";
 
-    if (!cp) { alert("Por favor, ingresá un código postal."); return; }
+    if (!cp) { 
+        alert("Por favor, ingresá un código postal."); 
+        return; 
+    }
 
-    // Lógica de precios
-    if (cp >= 5800 && cp <= 5809) { costo = 0; zona = "RÍO CUARTO: ENVÍO GRATIS"; }
-    else if (cp >= 5000 && cp <= 5999) { costo = 5500; zona = "PROV. CÓRDOBA: $5.500"; }
-    else if (cp >= 1000 && cp <= 1899) { costo = 7200; zona = "BS AS / CABA: $7.200"; }
-    else { costo = 8500; zona = "RESTO DEL PAÍS: $8.500"; }
+    // --- LÓGICA DE PRECIOS VÍA CARGO ---
+    const cpNum = parseInt(cp);
 
-    // 1. Mostrar resultado fijo
+    // 1. LOCAL: Río Cuarto (CP 5800)
+    if (cpNum >= 5800 && cpNum <= 5809) {
+        costo = 0; 
+        zona = "📍 RÍO CUARTO: ENVÍO GRATIS (Retiro en local)";
+    } 
+    // 2. REGIONAL: Resto de Córdoba y provincias limítrofes (Santa Fe, San Luis)
+    else if (cpNum >= 5000 && cpNum <= 6999) {
+        costo = 6500; 
+        zona = "🚚 CÓRDOBA / CENTRO: $6.500 (Vía Cargo)";
+    } 
+    // 3. CAPITAL Y GBA: Buenos Aires y CABA
+    else if (cpNum >= 1000 && cpNum <= 1899) {
+        costo = 7800; 
+        zona = "🚚 BS AS / CABA: $7.800 (Vía Cargo)";
+    } 
+    // 4. DISTANTE: Patagonia, Norte Argentino y Mendoza
+    else if ((cpNum >= 4000 && cpNum <= 4999) || (cpNum >= 8000)) {
+        costo = 9500; 
+        zona = "🚚 NORTE / PATAGONIA: $9.500 (Vía Cargo)";
+    } 
+    // 5. RESTO DEL PAÍS
+    else {
+        costo = 8200; 
+        zona = "🚚 RESTO DEL PAÍS: $8.200 (Vía Cargo)";
+    }
+
+    // --- INTERFAZ VISUAL ---
     resultado.style.display = 'block';
-    resultado.style.padding = '10px';
+    resultado.style.padding = '12px';
     resultado.style.backgroundColor = '#f8f9fa';
-    resultado.innerHTML = `<i class='bi bi-truck me-2'></i> ${zona}`;
+    resultado.innerHTML = `<i class='bi bi-box-seam me-2'></i> ${zona}`;
     resultado.style.color = (costo === 0) ? "#198754" : "#1a1a1a";
 
-    // 2. Actualizar el "Envío" en el resumen visualmente
-    document.querySelector('span[style*="font-size: 0.75rem"]').innerText = (costo === 0) ? "GRATIS" : "$" + costo.toLocaleString('es-AR');
+    // Actualizar el texto del "Envío" en el resumen
+    const envioDisplay = document.querySelector('span[style*="font-size: 0.75rem"]');
+    if (envioDisplay) {
+        envioDisplay.innerText = (costo === 0) ? "GRATIS" : "$" + costo.toLocaleString('es-AR');
+    }
 
-    // 3. ENVIAR A DJANGO (Sin recargar la página)
+    // --- ENVIAR A DJANGO ---
     fetch("{% url 'cart:cart_add_shipping' %}", {
         method: "POST",
         headers: {
@@ -263,11 +292,12 @@ function calcularEnvio() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Envío guardado en sesión");
-        // Opcional: Si querés que el total se sume visualmente ahora mismo:
+        // Actualizar el Total final sumando el Subtotal + Costo
         const subtotal = parseFloat("{{ cart.get_total_price }}");
         const nuevoTotal = subtotal + costo;
-        totalElemento.innerText = "$" + nuevoTotal.toLocaleString('es-AR').split(',')[0];
+        if (totalElemento) {
+            totalElemento.innerText = "$" + nuevoTotal.toLocaleString('es-AR').split(',')[0];
+        }
     });
 }
 </script>
