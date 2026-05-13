@@ -19,8 +19,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',  # <--- AGREGADO: Debe ir antes de staticfiles
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'cloudinary',          # <--- AGREGADO
     'products',
     'cart',
     'orders',
@@ -28,7 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- ESTA ES LA LÍNEA MÁGICA
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,7 +52,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Conecta el carrito con todos los templates
                 'cart.context_processors.cart', 
             ],
         },
@@ -62,8 +63,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Configuración de Base de Datos
 DATABASES = {
     'default': dj_database_url.config(
-        # Si existe la variable DATABASE_URL (en Render), la usa.
-        # Si no existe (en tu PC), usa SQLite por defecto.
         default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
         conn_max_age=600
     )
@@ -83,17 +82,25 @@ TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
 USE_TZ = True
 
-# Archivos estáticos (CSS, JavaScript, Imágenes de diseño)
-STATIC_URL = '/static/'  # Agregamos la barra inicial /
+# --- ARCHIVOS ESTÁTICOS (CSS, JS) ---
+STATIC_URL = '/static/'  
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] 
-
-# --- CONFIGURACIÓN PARA PRODUCCIÓN (RENDER) ---
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# -----------------------------------------------
 
-# Archivos multimedia (Fotos de productos cargadas desde el Admin)
+# --- CONFIGURACIÓN DE CLOUDINARY (MEDIA) ---
+# Reemplazá 'tu_cloud_name', 'tu_api_key' y 'tu_api_secret' con tus datos reales de Cloudinary
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dbw4tboih',
+    'API_KEY': '371985646845222',
+    'API_SECRET': 'Vqf5SPvkL82Z9mAwC0FaI4JH-Uo'
+}
+
+# Esta línea le dice a Django que las fotos de productos se guarden en Cloudinary
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 MEDIA_URL = '/media/'
+# MEDIA_ROOT ya no es necesario para producción con Cloudinary, pero lo dejamos por compatibilidad
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # --- CONFIGURACIÓN CRÍTICA DEL CARRITO ---
