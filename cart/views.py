@@ -18,20 +18,26 @@ def cart_add(request, product_id):
     if form.is_valid():
         cd = form.cleaned_data
         
-        # Lógica de talles
+        # Lógica de talles (extrae el objeto Talle elegido)
         if cd.get('size'):
             talle_nombre = str(cd['size'].name)
         else:
             talle_nombre = "Unico"
             
-        cart.add(product=product, 
-                 quantity=cd['quantity'], 
-                 size=talle_nombre)
+        # NUEVO: Lógica de colores (extrae el objeto Color elegido)
+        color_obj = cd.get('color') # Mandamos el objeto completo para que cart.py extraiga su ID
+
+        cart.add(
+            product=product, 
+            quantity=cd['quantity'], 
+            size=talle_nombre,
+            color=color_obj # <-- Pasamos el color al carrito
+        )
         
         messages.success(request, f'¡{product.name} se añadió al carrito!')
     else:
         # Fallback por si hay error en el formulario
-        cart.add(product=product, quantity=1, size="Unico")
+        cart.add(product=product, quantity=1, size="Unico", color=None)
         messages.success(request, f'¡{product.name} añadido!')
     
     # Redirigimos al catálogo para que el usuario vea el Toast y siga comprando
@@ -39,11 +45,12 @@ def cart_add(request, product_id):
 
 def cart_remove(request, product_id):
     cart = Cart(request)
-    # Cambiamos a POST si el formulario de borrado usa POST, 
-    # o mantenemos GET según cómo esté tu template.
-    size = request.POST.get('size') or request.GET.get('size')
     
-    cart.remove(product_id, size=size)
+    # Capturamos talle y color desde el formulario de borrado en detail.html
+    size = request.POST.get('size') or request.GET.get('size')
+    color = request.POST.get('color') or request.GET.get('color') # <-- NUEVO
+    
+    cart.remove(product_id, size=size, color=color) # <-- Pasamos ambos al remove
     messages.info(request, "Producto eliminado del carrito.")
     
     return redirect('cart:cart_detail')
@@ -52,7 +59,7 @@ def cart_detail(request):
     cart = Cart(request)
     return render(request, 'cart/detail.html', {'cart': cart})
 
-# --- NUEVA FUNCIÓN PARA EL ENVÍO ---
+# --- FUNCIÓN PARA EL ENVÍO ---
 def cart_add_shipping(request):
     if request.method == 'POST':
         try:

@@ -54,10 +54,14 @@
 
         /* Badges y Detalles */
         .product-name { text-transform: uppercase; font-size: 0.9rem; margin-bottom: 8px; }
-        .size-badge { 
+        .size-badge, .color-badge { 
             background: var(--sigma-dark); color: white; 
             padding: 3px 12px; font-size: 0.75rem; font-weight: 700; 
             border-radius: 2px; text-transform: uppercase;
+        }
+        /* Color badge con un toque distintivo gris o podés dejarlo oscuro igual */
+        .color-badge {
+            background: #555555;
         }
         .product-price { color: var(--sigma-red); font-weight: 700; font-size: 1.1rem; }
 
@@ -143,10 +147,18 @@
                             
                             <div class="flex-grow-1">
                                 <h6 class="product-name">{{ item.product.name }}</h6>
-                                <div class="mb-2">
-                                    <span class="text-muted small">Talle:</span> 
-                                    <span class="size-badge ms-1">{{ item.size_display }}</span>
+                                
+                                <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
+                                    <div>
+                                        <span class="text-muted small">Talle:</span> 
+                                        <span class="size-badge ms-1">{{ item.size_display }}</span>
+                                    </div>
+                                    <div class="ms-2">
+                                        <span class="text-muted small">Color:</span> 
+                                        <span class="color-badge ms-1">{{ item.color_display }}</span>
+                                    </div>
                                 </div>
+
                                 <div class="text-muted small mb-2">Cantidad: {{ item.quantity }}</div>
                                 <div class="product-price">${{ item.total_price|floatformat:"0"|intcomma }}</div>
                             </div>
@@ -154,6 +166,7 @@
                             <form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="size" value="{{ item.size }}">
+                                <input type="hidden" name="color" value="{{ item.color }}">
                                 <button type="submit" class="btn-remove">
                                     <i class="bi bi-trash3 fs-5"></i>
                                 </button>

@@ -28,6 +28,18 @@ class Size(models.Model):
         return self.name
 
 
+# --- NUEVO MODELO PARA COLORES ---
+class Color(models.Model):
+    name = models.CharField(max_length=50, unique=True, verbose_name='color')
+
+    class Meta:
+        verbose_name = 'color'
+        verbose_name_plural = 'colores'
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     category = models.ForeignKey(
         Category, 
@@ -43,6 +55,14 @@ class Product(models.Model):
         Size, 
         related_name='products', 
         verbose_name='talles disponibles',
+        blank=True
+    )
+    
+    # Agregamos la relación con los colores
+    colors = models.ManyToManyField(
+        Color, 
+        related_name='products', 
+        verbose_name='colores disponibles',
         blank=True
     )
     
