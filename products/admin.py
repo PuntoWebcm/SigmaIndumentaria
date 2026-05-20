@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Size
+from .models import Category, Product, Size, ProductImage
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -12,6 +12,13 @@ class SizeAdmin(admin.ModelAdmin):
     # Esto es opcional, pero ayuda si querés ordenar los talles alfabéticamente
     ordering = ['name']
 
+# --- ESTA CLASE PERMITE CARGAR LAS IMÁGENES EXTRAS EN LA MISMA PANTALLA ---
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 3  # Te va a mostrar 3 casilleros vacíos listos para meter fotos extras juntas
+    verbose_name = "Imagen adicional"
+    verbose_name_plural = "Imágenes adicionales"
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     # Agregué 'category' al listado para que sepas de qué sección es cada cosa
@@ -23,3 +30,6 @@ class ProductAdmin(admin.ModelAdmin):
     # Esto permite elegir los talles usando un buscador horizontal más cómodo 
     # en lugar de una lista simple hacia abajo
     filter_horizontal = ['sizes']
+    
+    # ASOCIAMOS LA GALERÍA PARA QUE APAREZCA ABAJO DEL PRODUCTO
+    inlines = [ProductImageInline]
