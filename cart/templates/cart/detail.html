@@ -189,13 +189,13 @@
                         <span>${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
                     </div>
                     
-                    {% if cart.get_total_price < 50000 %}
+                    {% if not cart.is_min_purchase_valid %}
                         <div class="p-3 mb-3 text-center" style="background-color: #fff5f5; border: 1px solid #feb2b2;">
                             <p class="mb-1 small Montserrat" style="color: #c53030; font-weight: 700; letter-spacing: 1px;">
-                                MÍNIMO DE COMPRA: $50.000
+                                MÍNIMO DE COMPRA: $30.000
                             </p>
                             <p class="mb-0 text-muted" style="font-size: 0.7rem;">
-                                El monto mínimo para envíos a todo el país es de $50.000.
+                                Te faltan <strong>${{ cart.get_remaining_for_min|floatformat:"0"|intcomma }}</strong> para alcanzar el mínimo de envío.
                             </p>
                         </div>
                         

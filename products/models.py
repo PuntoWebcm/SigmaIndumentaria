@@ -64,3 +64,22 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('product_detail', args=[self.slug])
+
+
+# --- NUEVO MODELO PARA IMÁGENES ADICIONALES (GALERÍA) ---
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.CASCADE, 
+        related_name='images', 
+        verbose_name='producto'
+    )
+    image = models.ImageField(upload_to='products/gallery/%Y/%m/%d', verbose_name='imagen adicional')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='fecha de carga')
+
+    class Meta:
+        verbose_name = 'imagen adicional'
+        verbose_name_plural = 'imágenes adicionales'
+
+    def __str__(self):
+        return f"Imagen para {self.product.name}"

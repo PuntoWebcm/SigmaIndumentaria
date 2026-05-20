@@ -95,3 +95,18 @@ class Cart:
         """
         del self.session[settings.CART_SESSION_ID]
         self.save()
+
+    # --- NUEVOS MÉTODOS PARA EL MÍNIMO DE COMPRA ---
+
+    def get_min_purchase_amount(self):
+        """Monto mínimo de compra requerido ($30.000)."""
+        return Decimal('30000')
+
+    def is_min_purchase_valid(self):
+        """Devuelve True si el carrito alcanza o supera los $30.000."""
+        return self.get_total_price() >= self.get_min_purchase_amount()
+
+    def get_remaining_for_min(self):
+        """Devuelve cuánto dinero falta para alcanzar el mínimo."""
+        remaining = self.get_min_purchase_amount() - self.get_total_price()
+        return max(Decimal('0'), remaining)
