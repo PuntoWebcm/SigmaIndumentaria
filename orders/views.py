@@ -13,8 +13,8 @@ DOMAIN = "https://sigmaindumentaria.onrender.com"
 def order_create(request):
     cart = Cart(request)
     
-    # --- TEMPORAL PARA PRUEBAS: MÍNIMO A 1 PESO ---
-    if cart.get_total_price() < 1:
+    # --- VALIDACIÓN MÍNIMO DE COMPRA ACTUALIZADO A $30.000 ---
+    if cart.get_total_price() < 30000:
         return redirect('cart:cart_detail')
     
     if request.method == 'POST':
@@ -53,13 +53,13 @@ def payment_selection(request):
     
     sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
 
-    # --- TEMPORAL PARA PRUEBAS: COBRAMOS $5 PESOS FIJOS ---
+    # El unit_price aquí será solo el total de productos (Envío = 0)
     preference_data = {
         "items": [
             {
-                "title": f"TEST BOT SIGMA - Pedido #{order.id}",
+                "title": f"Compra en SIGMA - Pedido #{order.id}",
                 "quantity": 1,
-                "unit_price": 5.0,  # <-- Forzado a 5 pesos para el test real
+                "unit_price": float(order.get_total_cost()),
                 "currency_id": "ARS",
             }
         ],

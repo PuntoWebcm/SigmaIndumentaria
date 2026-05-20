@@ -76,7 +76,18 @@
         .description-text { color: #555; line-height: 1.8; font-size: 0.95rem; }
 
         /* Formulario y Botones */
-        .form-control:focus { border-color: var(--sigma-dark); box-shadow: none; }
+        .form-control:focus, .form-select:focus { border-color: var(--sigma-dark); box-shadow: none; }
+        
+        /* Estilizar el select que viene de Django */
+        .form-select {
+            border-radius: 0 !important;
+            border: 1px solid var(--sigma-dark) !important;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            padding: 12px;
+            max-width: 280px;
+        }
+
         .btn-sigma { 
             background-color: var(--sigma-dark); 
             color: white; 
@@ -192,16 +203,20 @@
                     {% csrf_token %}
                     
                     {% if product.stock > 0 %}
-                        <div class="d-flex align-items-center mb-4">
-                            <label for="quantity" class="product-label small fw-bold text-uppercase me-3 mb-0">Cantidad:</label>
-                            <div style="width: 80px;">
-                                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control rounded-0 border-dark text-center fw-bold">
-                            </div>
-                            <div class="ms-3">
+                        <div class="mb-4">
+                            <label for="{{ cart_product_form.size.id_for_label }}" class="product-label small fw-bold text-uppercase d-block mb-2">
+                                Seleccionar Talle:
+                            </label>
+                            {{ cart_product_form.size }}
+                            {{ cart_product_form.quantity }}
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center">
                                 {% if product.stock <= 5 %}
-                                    <span class="badge bg-warning text-dark Montserrat fw-bold">¡ÚLTIMAS {{ product.stock }} UNIDADES!</span>
+                                    <span class="badge bg-warning text-dark Montserrat fw-bold p-2">¡ÚLTIMAS {{ product.stock }} UNIDADES DE ESTE ARTÍCULO!</span>
                                 {% else %}
-                                    <span class="small text-muted">({{ product.stock }} unidades disponibles)</span>
+                                    <span class="small text-muted"><i class="bi bi-check-circle text-success me-1"></i> Disponibilidad inmediata ({{ product.stock }} unidades)</span>
                                 {% endif %}
                             </div>
                         </div>
