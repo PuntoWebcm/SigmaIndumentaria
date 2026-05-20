@@ -22,6 +22,11 @@
             --sigma-gray: #f4f4f4;
         }
 
+        /* Desplazamiento Fluido al usar Anclajes */
+        html {
+            scroll-behavior: smooth;
+        }
+
         /* Tipografía General */
         body { 
             font-family: 'Open Sans', sans-serif; 
@@ -29,7 +34,7 @@
             background-color: #fff;
         }
         
-        h1, h2, h3, h4, h5, .navbar-brand, .category-link, .product-name, .btn-sigma {
+        h1, h2, h3, h4, h5, .navbar-brand, .category-link, .product-name, .btn-sigma, .nav-identity {
             font-family: 'Montserrat', sans-serif;
             letter-spacing: 0.5px;
         }
@@ -43,6 +48,16 @@
         .navbar-brand { font-weight: 700; font-size: 1.5rem; }
         .admin-btn { color: #ccc; transition: 0.3s; }
         .admin-btn:hover { color: var(--sigma-red); }
+
+        .nav-identity {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        .nav-identity:hover {
+            color: var(--sigma-red) !important;
+        }
 
         /* Hero Section Refinada */
         .hero-section {
@@ -114,7 +129,7 @@
             color: var(--sigma-dark);
             display: block;
         }
-        .price-tag { 
+        .price-tag mb-2 { 
             color: var(--sigma-red); 
             font-weight: 600; 
             font-size: 1rem; 
@@ -135,8 +150,12 @@
             color: white;
         }
 
-        /* Sección Nosotros */
-        .about-section { padding: 100px 0; background-color: #fafafa; }
+        /* Sección Nosotros con Margen de Desplazamiento Inteligente */
+        .about-section { 
+            padding: 100px 0; 
+            background-color: #fafafa;
+            scroll-margin-top: 80px; 
+        }
         .about-img { 
             border-radius: 0; 
             box-shadow: 15px 15px 0px var(--sigma-red); 
@@ -156,8 +175,12 @@
                 <span class="fw-bold">SIGMA</span>
             </a>
             
-            <div class="d-flex align-items-center">
-                <a href="{% url 'cart:cart_detail' %}" class="btn btn-link text-dark position-relative p-2">
+            <div class="d-flex align-items-center ms-auto">
+                <a href="#identidad-sigma" class="nav-identity text-dark text-decoration-none me-3 text-uppercase">
+                    Identidad Sigma
+                </a>
+
+                <a href="{% url 'cart:cart_detail' %}" class="btn btn-link text-dark position-relative p-2 text-decoration-none">
                     <i class="bi bi-bag fs-4"></i>
                     {% if cart|length > 0 %}
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
@@ -211,7 +234,7 @@
                             {{ product.name }}
                         </a>
                         <p class="price-tag mb-2" style="font-size: 0.9rem;">${{ product.price|floatformat:"0"|intcomma }}</p>
-                        <a href="{{ product.get_absolute_url }}" class="btn btn-sigma w-100 py-1" style="font-size: 0.7rem;">Ver Detalles</a>
+                        <a href="{{ product.get_absolute_url }}" class="btn btn-sigma w-100 py-1" style="font-size: 0.7 her;">Ver Detalles</a>
                     </div>
                 </div>
             </div>
@@ -219,7 +242,7 @@
         </div>
     </main>
 
-    <section class="about-section border-top">
+    <section id="identidad-sigma" class="about-section border-top">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 mb-5 mb-md-0">
