@@ -13,8 +13,8 @@ DOMAIN = "https://sigmaindumentaria.onrender.com"
 def order_create(request):
     cart = Cart(request)
     
-    # --- VALIDACIÓN MÍNIMO DE COMPRA $50.000 ---
-    if cart.get_total_price() < 50000:
+    # --- VALIDACIÓN MÍNIMO DE COMPRA ACTUALIZADO A $30.000 ---
+    if cart.get_total_price() < 30000:
         return redirect('cart:cart_detail')
     
     if request.method == 'POST':
@@ -46,7 +46,6 @@ def order_create(request):
     else:
         form = OrderCreateForm()
     return render(request, 'orders/order/create.html', {'cart': cart, 'form': form})
-
 def payment_selection(request):
     order_id = request.session.get('order_id')
     order = get_object_or_404(Order, id=order_id)
