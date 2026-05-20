@@ -189,43 +189,28 @@
                         <span>${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
                     </div>
                     
-                    {% if not cart.is_min_purchase_valid %}
-                        <div class="p-3 mb-3 text-center" style="background-color: #fff5f5; border: 1px solid #feb2b2;">
-                            <p class="mb-1 small Montserrat" style="color: #c53030; font-weight: 700; letter-spacing: 1px;">
-                                MÍNIMO DE COMPRA: $30.000
-                            </p>
-                            <p class="mb-0 text-muted" style="font-size: 0.7rem;">
-                                Te faltan <strong>${{ cart.get_remaining_for_min|floatformat:"0"|intcomma }}</strong> para alcanzar el mínimo de envío.
-                            </p>
-                        </div>
-                        
-                        <button class="btn btn-secondary w-100 p-3 rounded-0 opacity-50" disabled style="font-family: 'Montserrat'; font-size: 0.8rem; cursor: not-allowed; letter-spacing: 1px; margin-top: 20px;">
-                            MÍNIMO NO ALCANZADO
-                        </button>
-                    {% else %}
-                        <div class="d-flex justify-content-between mb-1 small">
-                            <span class="text-muted">Envío</span>
-                            <span class="text-dark fw-bold" style="font-size: 0.75rem;">A PAGAR EN AGENCIA</span>
-                        </div>
-                        <p class="text-muted" style="font-size: 0.65rem; line-height: 1.2;">
-                            *El envío se coordina tras la compra y se paga al recibir el paquete.
-                        </p>
+                    <div class="d-flex justify-content-between mb-1 small">
+                        <span class="text-muted">Envío</span>
+                        <span class="text-dark fw-bold" style="font-size: 0.75rem;">A PAGAR EN AGENCIA</span>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.65rem; line-height: 1.2;">
+                        *El envío se coordina tras la compra y se paga al recibir el paquete.
+                    </p>
 
-                        <hr class="my-4">
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="fw-bold Montserrat">TOTAL</span>
-                            <span class="fw-bold fs-5">${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
-                        </div>
-                        
-                        <div class="p-2 mb-3 text-center" style="background-color: #f8f9fa; border: 1px dashed #ccc;">
-                            <i class="bi bi-box-seam me-2"></i>
-                            <span class="small Montserrat" style="font-size: 0.7rem; font-weight: 600;">COORDINAMOS POR WHATSAPP</span>
-                        </div>
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold Montserrat">TOTAL</span>
+                        <span class="fw-bold fs-5">${{ cart.get_total_price|floatformat:"0"|intcomma }}</span>
+                    </div>
+                    
+                    <div class="p-2 mb-3 text-center" style="background-color: #f8f9fa; border: 1px dashed #ccc;">
+                        <i class="bi bi-box-seam me-2"></i>
+                        <span class="small Montserrat" style="font-size: 0.7rem; font-weight: 600;">MODO TEST - COBRO $5 PESOS</span>
+                    </div>
 
-                        <a href="{% url 'orders:order_create' %}" class="btn-checkout text-decoration-none d-block text-center">
-                                 FINALIZAR COMPRA
-                        </a>
-                    {% endif %}
+                    <a href="{% url 'orders:order_create' %}" class="btn-checkout text-decoration-none d-block text-center">
+                             FINALIZAR COMPRA
+                    </a>
 
                     <div class="trust-icons">
                         <i class="bi bi-shield-check" title="Compra Segura"></i>
